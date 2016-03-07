@@ -1,23 +1,19 @@
-KERBAL PLANETARY BASE INC.
----------------
-	This is an expansion for the stock ksp parts. It adds components for bases on other planets or even on Kerbin.
-	No other mods are required for this mod to work.
+# Kerbal Planetary Base Systems
 
-INSTALLATION
----------------
-	To install, simply copy the gamedata folder into your Kerbal Space Program folder.
-	When you already have another version of this mod installed, delete this folder first. (As this is still in
-	heavy development and may have some changes in the folder structure)
+KPBS (Kerbal Planetary Base Systems) is a mod for the game Kerbal Space Program. It adds several parts to the game, that can be used to build bases on planets. This includes Habitats, Greenhouse, Cupola and several other. The mod also includes support for many other mods, like the major Life-Support Mods. No other mods are required for this mod to work.
 
-CHANGE FILTER
----------------
-	You can change if and where filter for this mods are added. This can be done in the "KPBS_settings.cfg" file.
+## Installation
 
-LICENSING
----------------
-	CC-BY-NC 
-	http://creativecommons.org/licenses/by-nc/4.0/
+To install, simply copy the gamedata folder into your Kerbal Space Program folder.
+When you already have another version of this mod installed, delete this folder first.
 
-AUTHOR
----------------
-	Nils277
+## License
+
+CC-BY-NC 
+http://creativecommons.org/licenses/by-nc/4.0/
+
+
+## Author
+
+Nils277
+JPLRepo and MerlinsMaster for the Deepfreeze parts
