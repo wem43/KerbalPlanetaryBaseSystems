@@ -1,0 +1,235 @@
+v1.0.2
+    Bug Fix:
+        - Updated Version file
+v1.0.1
+    Bug Fix:
+        - The flexible KAS tube is now textured again
+v1.0.0
+    New Parts:
+        - Added Central Hub
+        - Added Garage Parts (5x)
+        - Added Inline-drill
+        - Added landing-gear for the underside of parts
+        - Added container version of the science-jr.
+    Mod Support:
+        - Updated Mod-Support for DeepFreeze
+        - Updated Mod-Support for USI-LS
+        - Rebalanced TAC-LS (permanent bases on some planets are now possible)
+        - Added Drill for Water for TAC-LS and USI-LS
+    Enhancements:
+        - Changed the structure of the mod folder to easier remove unwanted parts
+        - Added support for symmetrical attachment for the bi/triple couplers
+        - All parts that decouple now also have a sound and particles when they decouple
+        - Icons in the editor are no longer blurry when a lower texture resolution is set
+    Bug Fixes:
+        - Removed Surface Attach abilit of landing gear to avoid missing decouple bug
+        - Wheels on the new landing gear now rotate to the right direction when driving
+        - Deployable Parts are now always deployed when they appear in a rescue mission
+        - Contracts are now updated for crew capacity when a part is deployed
+v0.2.10
+    Bug-Fixes:
+        - Fixed Plugin and Collider issues from the modular corridors
+v0.2.9
+    General:
+        - Recompiled for KSP 1.0.5
+        - Updated Contract-Configs for the new system
+    New Parts:
+        - Added End-Cap with one storage slot
+    Mod Support:
+        - Moved the science category of the KIS-container to be available AFTER the storage-modules
+        - Added big version of the KIS container
+        - Added support for Keepfit
+        - Added support for KabinKraziness
+    Enhancements:
+        - Replaced corridors with modular versions
+        - Replaced the old landing-gear for better ground clearance and modularity
+        - All sides of the base-profile crossway are now modular
+        - Resized triple-adapter to fit the new landing gear
+    Bug Fixes:
+        - Rescaled and moved the airlocks and ladders to avoid sliding and bouncing
+v0.2.8
+    Mod Support (Tweaks)
+        - Removed HUD for RPM from Cupola, it did not fit
+        - Rebalanced weight and lenght of the flexible corridor
+    Enhancements:
+        - The Airlocks on the parts now look similar
+        - Texture and UV tweaks for a more unified look
+        - The Corridor airlock now has a stack node on the opposite site too
+        - Rebalanced max. impact-speed for the parts
+    Bug Fixes:
+        - Moved Throttle in Cupola to avoid clipping
+        - Fixed Errors in *.cfg files preventing life-support recyclers to work
+        - Fixed several typos in the descriptions
+v0.2.7b
+    Bug Fixes:
+        - Added missing CLS support for the airlocks
+        - Fixed wrong CLS definition for the flexible corridor (KAS)
+        - Fixed wrong KIS-Item definition for the flexible corridor
+v0.2.7
+    New Parts:
+        - Added Fuel-Cell container
+        - Added Base Profile End-Airlock (with KIS storage)
+        - Added Base Profile Side-Airlock (with KIS storage)
+        - Added Size3 Tri-Coupler
+    Enhancements:
+        - The KPBS parts now also satisfy the contracts for bases (thanks to Fraz86), needs ModuleManager
+        - Optimized memory-usage of some parts
+        - Removed unimportant debug-outputs from the plugin
+        - Restricted passability for CLS to the main nodes on the modules (thanks to Fraz86)
+    New Functionality:
+        - Added science experiment for the greenhouse
+        - Added the habitats and the greenhouse as possible part request for bases (needs ModuleManager)
+    Mod Support:
+        - Added bigger KIS baseplate
+        - Added support for Remote Tech
+        - Removed RPM Monitor as TV from the habitats (it will be replaced by a better model later)
+        - Added support for FilterExtentions (will be available when FilterExtentions is updated)
+        - Adapted LS parts to better fit with (SETI)CTT
+    Bug Fixes:
+        - Fixed wrong techtree definitions of some parts for CTT which prevented them from appearing in the techtree
+        - Adjusted the colliders of the Service-Bay it should be a bit easier to attach now
+        - Outsourced configs for CLS on the Life-Support parts, this should prevent clutter in the log
+        - The Habitat MK2 and the 2-Eng Corridor Adapter are now passable in CLS again
+        - Adjusted placement of ladder on Planetary Control. This should reduce jumping when going on EVA
+v0.2.6
+    New Parts:
+        - Added corridor with mounts for landing-legs
+    Mod Support:
+        - Added flexible tube for KAS
+    Enhancements:
+        - Transparent windows for RPM are now off by default to increase performance
+    Bug-Fixes:
+        - Fixed lighting of the Habitat MK2
+        - The Corridor Airlock is now passable for CLS
+v0.2.5
+    New IVA:
+        - Added the IVA for the Laboratory
+    Enhancements:
+        - Moved the parts in the techtree to more reasonable nodes
+    - Renamed the gangway parts to corridor
+    Mod Support:
+        - Added support for DeepFreeze (Cryopods and Container). Thanks to JPLRepo and MerlinsMaster for them!
+        - Added support for Community-Tech-Tree
+    - Updated support for RPM to be compatible with switchable window transparency
+    Bug-Fixes:
+        - The small inline modular storage is now also labeled as "inline"
+        - Fixed emissive lights for the deployable modules
+        - Fixed the inverted wheel direction
+        - The greenhouse is now visible in the Mod filter again
+        - Added missing the CoM offsets for the last containers
+v0.2.4
+    Bug-Fixes:
+        - Added missing source-files
+        - Removed crew-capacity from the crossSection
+v0.2.3
+    New Parts:
+        - Added 4X Modular Storage for the Size2 profile
+        - Added 8X Modular Storage for the Size2 profile
+        - Added Crosssection for the base profile
+    Enhancements:
+        - Optimized some Collision-Meshes to be more stable and faster
+        - Expandable modules now have an Airlock on the side and on the top
+        - Adjusted center of mass for the containers
+        - Adjusted steering of the combined landing legs
+        - Changed status-text of the greenhouse when no crew is in that part
+        - Moved support for CLS into separate file to prevent log spam of missing modules
+        - The greenhouse can now be found in the Life-Support section when a LS system is installed
+    Mod Support:
+        - Added support for Raster-Prop-Mointor (with transparent windows)
+        - Added support for RealFuels, Modular Fuel Tanks and Stockalike Realfuels
+    Bug-Fixes:
+        - Tweaked thermal properties of the docking-ports to counteract the overheating bug
+        - Partially reverted rotation of Landing-Leg and Landing-Gear to reenable symmetry (this whill break the landing legs and
+        - Base Bi-Cupler now has the right bulkhead profile set
+        - Set the waste capacity of the greenhouse to the right value
+        - The Greenhouse now still produces food for TAC-LS when oxygen is full
+        - Kerbal can now also walk on parts while these parts are animated
+        - Potentally fixed clippin bug when deploying the modules
+v0.2.2
+    New IVA:
+        - Added the IVA for the Command Module
+    Enhancements:
+        - Rebalanced the Capacities of some of the LS Container (mainly TAC)
+        - Reoriented the Landing-Leg and the Landing-Gear, is shoud be way easer now to attach them
+    Bug fixes:
+        - Tweaked thermal properties of the adapters, hopefully counteracting the overheating bug
+        - Fixed the model definition of the KIS container, it is available again
+        - Fixed wrong definition for resources for TAC in the Habitats and the Greenhouse
+v0.2.1
+    Bug fixed:
+        - Fixed Error in pluging dll causing the Filters to not work correctly
+v0.2.0
+    New Parts:
+        - Added Landing-Leg/Wheel combination part
+        - Added Storage Module for 4 Containers
+    Mod Support:
+        - Added support for the following Life-Support mods (This might break the Greenhouse as it is used now)
+            * TAC-LS
+            * USI-LS
+            * Ioncross Crew Support
+            * Snacks!
+            * ECLSS
+            * IFI Life Support
+    Enhancements:
+        - Added config file to enable/disable filter in the VAB/SPH (as prep. for FilterExtension compatibility)
+        - Changed capacity of the KIS container to be more realistic.
+        - Life Support mods can have their on function filter
+        - Added option to see all parts in one function filter (disabled by default)
+    Bug fixes:
+        - Fixed Landing Leg having wrong suspension name (it spammed the log)
+        - Corrected typo in Airlock IVA texture
+v0.1.5
+    New Parts:
+        - Added a smaller variant for the modular storage
+        - Added a KIS Container for the storage.
+    New Interiors:
+        - Added interior for the Habitat MK1
+        - Added interior for the Gangway-Airlock
+    Bug fixes:
+        - The deployable parts now also support storeage of the KIS inventory
+        - The Landing Control "MAL" Part is not attached upside down anymore
+v0.1.4
+    New Parts:
+        - Added the Planetary ISRU
+        - Added the "Bigfoot" Landing Legs
+        - Added Base to MK2 adapter
+        - Added Base to Size1 adapter
+        - Added Xenon Container
+        - Added Stack-Separator for the Base-Profile
+        - Added Bi-Cupler for two Bases to Size2
+        - Added Heat-Shield with the Base Profile
+    Enhancements:
+        - Scaled down the chairs in the IVA of Habitat MK2 so one can see the Kerbals face
+        - Changed crew capaity of Habitat MK1 from 2 to 3
+        - The Base parts can now also be found in a new profile category and in two new Manufaturer categories
+        - Added new main filter for this mod with functions as subcategory
+    Bug fixes:
+        - Habitat MK1 is now in the right science category
+        - Several Typos and errors in the descriptions removed. Thanks to Wolf Baginski for pointing them out!
+        - Scaled and mirrored some flags on the parts to be correct.
+v0.1.3
+    Corrected license in the readme file to CC-BY-NC
+v0.1.2
+    New Parts:
+        - Added the Habitat Module MK1 for two Kerbals
+        - Added the MAL top mounted control unit
+    New IVAs:
+        - Added the IVA for the Cupola
+    Enhancements:
+        - The doors are scaled up and repositioned.
+        - Added Stack-Nodes on top and bottom of the parts
+        - The windows now have a structural segment where they bend (no potential (theoretical) structural weakness)
+        - The deployable module now all mention the number of kerbals they can hold
+    - The current IVAs now have better lighing
+        - Some Texure tweaks in the Habitat MK2
+        - Added flags to some of the modules
+    Mod Support:
+        - All the parts now support CLS
+    Bug fixes:
+        - The gangway-airlock and the habitat mk2 can now store experiments and the habitat mk2 now allows crew reports
+        - Repositioned the center of mass of some modules, it was slightly offset
+        - Corrected some typos in the descriptions
+v0.1.1
+    - Fixed the path error in the .cfg files. The parts war now available in the SPH and VAB
+v0.1.0
+    - Inital release.

@@ -1,0 +1,14 @@
+The Deepfreeze parts "X200 Glykerol Container" and "CRY-5000 Planetary DeepFreezer" and its internal were made by JPLRepo and MerlinsMaster.
+
+DEEPFREEZE Continued...
+---------------
+	You need at least DeepFreeze Continued.. in Version V0.18.2.1 for the parts
+
+LINK
+---------------
+	http://forum.kerbalspaceprogram.com/threads/124720-1-0-4-DeepFreeze-Continued-Bug-Fixes-Enhancements-%28v0-18-2-1%29-11-Sep-2015?p=2003464&viewfull=1#post2003464
+
+THESE PARTS ARE LICENSED UNDER 
+---------------
+	CC BY-NC-SA
+	https://creativecommons.org/licenses/by-nc-sa/4.0/
