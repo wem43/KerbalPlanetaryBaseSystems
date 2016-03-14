@@ -9,7 +9,6 @@ namespace PlanetarySurfaceStructures
     public class SurfaceStructuresCategory : MonoBehaviour
     {
         private string manufacturer1 = "K&K Advanced Orbit and Surface Structures";
-        private string manufacturer2 = "Kerman Corridors & Sewer-Pipes Inc.";
         private string manufacturer3 = "K&K Life-Support Devision";
 
         /**
@@ -29,7 +28,16 @@ namespace PlanetarySurfaceStructures
          */
         private bool filter_KKAOSS(AvailablePart part)
         {
-            return part.name.StartsWith("KKAOSS");
+            if (part != null)
+            {
+                return part.name.StartsWith("KKAOSS");
+
+            }
+            else
+            {
+
+                return false;
+            }
         }
 
         /**
@@ -110,68 +118,80 @@ namespace PlanetarySurfaceStructures
             //create and the icons
             Texture2D icon_surface_structures = new Texture2D(32, 32, TextureFormat.ARGB32, false);
             Texture2D icon_k_and_k = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-            Texture2D icon_k_pipes = new Texture2D(32, 32, TextureFormat.ARGB32, false);
             Texture2D icon_k_lifesupport = new Texture2D(32, 32, TextureFormat.ARGB32, false);
             Texture2D icon_category_ls = new Texture2D(32, 32, TextureFormat.ARGB32, false);
 
-            //load the icons
-            icon_surface_structures.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSicon.png"));
-            icon_k_and_k.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSbase.png"));
-            icon_k_pipes.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSgangways.png"));
-            icon_k_lifesupport.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSlifesupport.png"));
-            icon_category_ls.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSCategoryLifeSupport.png"));
+            bool valid = true;
 
-            List<AvailablePart> LS_parts = PartLoader.Instance.parts.FindAll(ap => ap.name.StartsWith("KKAOSS.LS"));
-
-
-            //DEBUG
-            /*List<AvailablePart> labs = PartLoader.Instance.parts.FindAll(ap => ap.name.Equals("KKAOSS.Science.g"));
-
-            if ((labs == null) || (labs.Count == 0))
+            try
             {
-                Debug.Log("[KPBS-DEBUG LAB] No lab found!");
-            }
-            else
-            {
-                foreach (AvailablePart lab in labs)
+                //load the icons
+                if (icon_surface_structures.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSicon.png")))
                 {
-                    Debug.Log("[KPBS-DEBUG LAB] Category: " + lab.category.ToString() + " ScienceNode: " + lab.TechRequired + " ModuleInfo: " + lab.moduleInfo);
-
-                    RDTech.State state =  ResearchAndDevelopment.GetTechnologyState(lab.TechRequired);
-
-                    Debug.Log("[KPBS-DEBUG LAB] Lab Available in TechTree: " + ResearchAndDevelopment.PartTechAvailable(lab));
-                    Debug.Log("[KPBS-DEBUG LAB] Lab Purchased: " + ResearchAndDevelopment.PartModelPurchased(lab));
-                    Debug.Log("[KPBS-DEBUG LAB] Missing Parts: " + ResearchAndDevelopment.CheckForMissingParts());
-                    Debug.Log("[KPBS-DEBUG LAB] Node " + lab.TechRequired + " state: " + ResearchAndDevelopment.GetTechnologyState(lab.TechRequired));
+                    Debug.Log("[KPBS] ERROR loading KPBSicon");
+                    return;
                 }
-            }*/
+                if (icon_k_and_k.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSbase.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading KPBSbase");
+                    return;
+                }
+                if (icon_k_lifesupport.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSlifesupport.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading KPBSlifesupport");
+                    return;
+                }
+                if (icon_category_ls.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSCategoryLifeSupport.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading KPBSCategoryLifeSupport");
+                    return;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[KPBS] ERROR loading Images" + e.Message);
+                valid = false;
+            }
 
-            //not needed as KPS creates own bulkhead profile
-            //icon_base_profile.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/Icons/baseProfile.png"));
+            if (!valid)
+            {
+                return;
+            }
 
-            //-----------------profiles---------------------
 
-            //not needed as KPS creates own bulkhead profile
-            //PartCategorizer.Category profileFilter = PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Cross-Section Profile");
-            //add base profile to the category
-            //PartCategorizer.AddCustomSubcategoryFilter(profileFilter, "Planetary Base", filterIconBaseProfiles, p => filterProfiles(p));
-
-            //--------------end profiles--------------------
+            //if the configuration is null
+            if (KPBSConfiguration.Instance() == null) {
+                Debug.Log("[KPBS] ERROR Configuration Instance is null");
+                return;
+            }
+            //when the textures could not be loaded
+            List<AvailablePart> LS_parts = PartLoader.Instance.parts.FindAll(ap => ap.name.StartsWith("KKAOSS.LS"));
 
             //----------------manufacturer------------------
 
             if (KPBSConfiguration.Instance().ShowManufacturer)
             {
                 RUI.Icons.Selectable.Icon filterIconKandK = new RUI.Icons.Selectable.Icon("KKAOSS_icon_k_and_k", icon_k_and_k, icon_k_and_k, true);
-                RUI.Icons.Selectable.Icon filterIconKPipes = new RUI.Icons.Selectable.Icon("KKAOSS_icon_k_pipes", icon_k_pipes, icon_k_pipes, true);
                 RUI.Icons.Selectable.Icon filterIconKLife = new RUI.Icons.Selectable.Icon("KKAOSS_icon_k_lifesupport", icon_k_lifesupport, icon_k_lifesupport, true);
+
+                if (filterIconKandK == null)
+                {
+                    Debug.Log("[KPBS] ERROR filterIconKandK cannot be loaded");
+                    return;
+                }
+
+                if (filterIconKLife == null)
+                {
+                    Debug.Log("[KPBS] ERROR filterIconKLife cannot be loaded");
+                    return;
+                }
+
 
                 //get manufacturer filter
                 PartCategorizer.Category manufacturerFilter = PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Manufacturer");
 
                 //add the manufacturers
                 PartCategorizer.AddCustomSubcategoryFilter(manufacturerFilter, manufacturer1, filterIconKandK, p => filterManufacturer(p, manufacturer1));
-                PartCategorizer.AddCustomSubcategoryFilter(manufacturerFilter, manufacturer2, filterIconKPipes, p => filterManufacturer(p, manufacturer2));
                
                 //when there are life support parts available, add them to the new manufacturer
                 List<AvailablePart> parts = PartLoader.Instance.parts.FindAll(ap => (ap.category == PartCategories.Utility && ap.name.StartsWith("KKAOSS.LS")));
@@ -198,6 +218,47 @@ namespace PlanetarySurfaceStructures
                 RUI.Icons.Selectable.Icon ic_utility = PartCategorizer.Instance.iconLoader.GetIcon("R&D_node_icon_generic");
                 RUI.Icons.Selectable.Icon ic_science = PartCategorizer.Instance.iconLoader.GetIcon("R&D_node_icon_advsciencetech");
                 RUI.Icons.Selectable.Icon ic_lifeSupport = new RUI.Icons.Selectable.Icon("KKAOSS_icon_KPSS", icon_category_ls, icon_category_ls, true);
+
+                if (ic_pods == null)
+                {
+                    Debug.Log("[KPBS] ERROR ic_pods cannot be loaded");
+                    return;
+                }
+                if (ic_fuels == null)
+                {
+                    Debug.Log("[KPBS] ERROR ic_fuels cannot be loaded");
+                    return;
+                }
+                if (ic_engine == null)
+                {
+                    Debug.Log("[KPBS] ERROR ic_engine cannot be loaded");
+                    return;
+                }
+                if (ic_structural == null)
+                {
+                    Debug.Log("[KPBS] ERROR ic_structural cannot be loaded");
+                    return;
+                }
+                if (ic_aero == null)
+                {
+                    Debug.Log("[KPBS] ERROR ic_aero cannot be loaded");
+                    return;
+                }
+                if (ic_utility == null)
+                {
+                    Debug.Log("[KPBS] ERROR ic_utility cannot be loaded");
+                    return;
+                }
+                if (ic_science == null)
+                {
+                    Debug.Log("[KPBS] ERROR ic_science cannot be loaded");
+                    return;
+                }
+                if (ic_lifeSupport == null)
+                {
+                    Debug.Log("[KPBS] ERROR ic_lifeSupport cannot be loaded");
+                    return;
+                }
 
                 //add KPSS to the categories
                 PartCategorizer.Category surfaceStructureFilter = PartCategorizer.AddCustomFilter("Planetary Surface Structures", filterIconSurfaceStructures, new Color(0.63f, 0.85f, 0.63f));
@@ -229,12 +290,19 @@ namespace PlanetarySurfaceStructures
             {
 
                 RUI.Icons.Selectable.Icon filterIconSurfaceStructures = new RUI.Icons.Selectable.Icon("KKAOSS_icon_lifeSupport", icon_surface_structures, icon_surface_structures, true);
-                
+
+                if (filterIconSurfaceStructures == null)
+                {
+                    Debug.Log("[KPBS] ERROR filterIconSurfaceStructures cannot be loaded");
+                    return;
+                }
+
+
                 //Find the function filter
                 PartCategorizer.Category functionFilter = PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Function");
 
                 //Add a new subcategory to the function filter
-                if (KPBSConfiguration.Instance().SeparateLifeSupport)
+                if ((KPBSConfiguration.Instance().SeparateLifeSupport) && (LS_parts.Count > 0))
                     PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Planetary Surface Structures", filterIconSurfaceStructures, p => filter_KKAOSS_NO_LS(p));
                 else
                     PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Planetary Surface Structures", filterIconSurfaceStructures, p => filter_KKAOSS(p));
@@ -268,6 +336,12 @@ namespace PlanetarySurfaceStructures
                 if (LS_parts.Count() > 0)
                 {
                     RUI.Icons.Selectable.Icon filterIconLifeSupport = new RUI.Icons.Selectable.Icon("KKAOSS_icon_KPSS", icon_category_ls, icon_category_ls, true);
+
+                    if (filterIconLifeSupport == null)
+                    {
+                        Debug.Log("[KPBS] ERROR filterIconLifeSupport cannot be loaded");
+                        return;
+                    }
 
                     //Find the function filter
                     PartCategorizer.Category functionFilter = PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Function");

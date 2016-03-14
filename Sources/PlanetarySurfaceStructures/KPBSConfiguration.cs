@@ -21,9 +21,9 @@ namespace PlanetarySurfaceStructures
         }
 
         private ConfigNode node;
-        private bool showManufacturer = true;
-        private bool showModFilter = true;
-        private bool separateLifeSupport = true;
+        private bool showManufacturer = false;
+        private bool showModFilter = false;
+        private bool separateLifeSupport = false;
         private bool showSeparateFunctionCategory = false;
 
         public bool ShowManufacturer
@@ -50,16 +50,44 @@ namespace PlanetarySurfaceStructures
         {
             Debug.Log("[KPBS]Init settings");
 
-            node = GameDatabase.Instance.GetConfigNodes("KPBSConfig").FirstOrDefault();//ConfigNode.Load(file).GetNode("KPBS");
-            showManufacturer = bool.Parse(node.GetValue("showManufacturers"));
-            showModFilter = bool.Parse(node.GetValue("showModCategory"));
-            showSeparateFunctionCategory = bool.Parse(node.GetValue("separateFunctionFilter"));
-            separateLifeSupport = bool.Parse(node.GetValue("separateLifeSupport"));
+            try
+            {
+                node = GameDatabase.Instance.GetConfigNodes("KPBSConfig").FirstOrDefault();
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[KPBS] ERROR config node null exception");
+            }
 
-            Debug.Log("[KPBS]showManufacturer: " + showManufacturer);
-            Debug.Log("[KPBS]showModFilter: " + showModFilter);
-            Debug.Log("[KPBS]showSeparateFunctionCategory: " + showSeparateFunctionCategory);
-            Debug.Log("[KPBS]separateLifeSupport: " + separateLifeSupport);            
+
+            if (node == null)
+            {
+                Debug.Log("[KPBS] ERROR config node is null");
+            }
+
+            try
+            {
+                showManufacturer = bool.Parse(node.GetValue("showManufacturers"));
+
+
+                showModFilter = bool.Parse(node.GetValue("showModCategory"));
+                showSeparateFunctionCategory = bool.Parse(node.GetValue("separateFunctionFilter"));
+                separateLifeSupport = bool.Parse(node.GetValue("separateLifeSupport"));
+
+                Debug.Log("[KPBS]showManufacturer: " + showManufacturer);
+                Debug.Log("[KPBS]showModFilter: " + showModFilter);
+                Debug.Log("[KPBS]showSeparateFunctionCategory: " + showSeparateFunctionCategory);
+                Debug.Log("[KPBS]separateLifeSupport: " + separateLifeSupport);
+            }
+            catch (ArgumentNullException exception)
+            {
+                Debug.Log("[KPBS] ERROR config node argument is null " + exception.Message);
+            }
+            catch (FormatException exception)
+            {
+                Debug.Log("[KPBS] ERROR config node argument malformed " + exception.Message);
+            }
+
         }
     }
 }

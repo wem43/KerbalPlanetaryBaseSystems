@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E739F466-309F-44BC-9380-37AB22CA5653}</ProjectGuid>
+    <ProjectGuid>{27BB103E-2FDD-4C57-8594-E604485D6648}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PlanetarySurfaceStructures</RootNamespace>
     <AssemblyName>PlanetarySurfaceStructures</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -41,17 +40,17 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DependentLight.cs" />
     <Compile Include="IVASwitcher.cs" />
     <Compile Include="KPBSConfiguration.cs" />
+    <Compile Include="ModuleCorridorNodes.cs" />
     <Compile Include="ModuleKPBSAirfilter.cs" />
     <Compile Include="ModuleKPBSConverter.cs" />
     <Compile Include="ModuleKPBSModelSwitch.cs" />
-    <Compile Include="ModuleCorridorNodes.cs" />
     <Compile Include="ModuleKPBSWaterHarvester.cs" />
     <Compile Include="PlanetaryGreenhouse.cs" />
     <Compile Include="PlanetaryModule.cs" />

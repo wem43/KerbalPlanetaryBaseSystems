@@ -278,8 +278,10 @@ namespace PlanetarySurfaceStructures
 						if (this.part.CrewCapacity != crewCapacityDeployed)
 						{
 							this.part.CrewCapacity = crewCapacityDeployed;
-                            GameEvents.onVesselChange.Fire(this.vessel);
-							//updateContracts();
+                            if (this.vessel == FlightGlobals.ActiveVessel) {
+								GameEvents.onVesselChange.Fire(this.vessel);
+							}
+							
 						}
 						
                     }
@@ -311,7 +313,9 @@ namespace PlanetarySurfaceStructures
 					if (this.part.CrewCapacity != crewCapcityRetracted)
                     {
                         this.part.CrewCapacity = crewCapcityRetracted;
-                        GameEvents.onVesselChange.Fire(this.vessel); //updateContracts();
+						if (this.vessel == FlightGlobals.ActiveVessel) {
+							GameEvents.onVesselChange.Fire(this.vessel);
+						}
                     } 
                 }
             }
