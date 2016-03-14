@@ -1,3 +1,13 @@
+v1.0.3
+    Enhancements:
+	    - Reduced number of Manufaturers to two to remove unnecessary clutter
+    Mod Support:
+        - Added support for Tweak-Scale for the corridor parts
+        - Enabled water containers for USI-LS
+    Bug Fixes:
+        - Fixed a shift of focus when another vessel comes in physics range and it has a deployed part
+        - The Algae Farm now produces the right abounts of CO2 and Organics for TAC-LS
+        - Added Exception Checks for the Editor Categories. Other mods should be visible again when an error happens.
 v1.0.2
     Bug Fix:
         - Updated Version file
