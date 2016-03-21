@@ -15,6 +15,8 @@ namespace PlanetarySurfaceStructures
         public string transormNames = string.Empty;
 
 
+        private bool updateNeeded = false;
+
         //the names of the nodes for the replaces parts
         [KSPField]
         public string replaceNodeNames = string.Empty;
@@ -40,10 +42,40 @@ namespace PlanetarySurfaceStructures
         //the list of transforms to replace
         List<ReplacedPart> replaceParts = new List<ReplacedPart>();
 
+        bool editorChangeRegistered = false;
+        bool flightChangeRegistered = false;
+
         //the part that is enabled and disabled
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
+
+            if (HighLogic.LoadedSceneIsEditor)
+            {
+                if (!editorChangeRegistered)
+                {
+                    GameEvents.onEditorShipModified.Add(shipModified);
+                    editorChangeRegistered = false;
+                }
+                if (flightChangeRegistered)
+                {
+                    GameEvents.onVesselWasModified.Remove(vesselModified);
+                    flightChangeRegistered = false;
+                }
+            }
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (!flightChangeRegistered)
+                {
+                    GameEvents.onVesselWasModified.Add(vesselModified);
+                    flightChangeRegistered = true;
+                }
+                if (flightChangeRegistered)
+                {
+                    GameEvents.onEditorShipModified.Remove(shipModified);
+                    editorChangeRegistered = false;
+                }
+            }
 
             string[] nodenames = nodeNames.Split(',');
             string[] transformGroupNames = transormNames.Split(',');
@@ -178,9 +210,37 @@ namespace PlanetarySurfaceStructures
             updateAllCorridors();
         }
 
+        private void OnDestroy()
+        {
+            if (flightChangeRegistered)
+            {
+                GameEvents.onVesselWasModified.Remove(vesselModified);
+                flightChangeRegistered = false;
+            }
+            if (editorChangeRegistered)
+            {
+                GameEvents.onEditorShipModified.Remove(shipModified);
+                editorChangeRegistered = false;
+            }
+        }
+
+        private void vesselModified(Vessel data)
+        {
+            updateNeeded = true;
+        }
+
+        private void shipModified(ShipConstruct data)
+        {
+            updateNeeded = true;
+        }
+
         public void Update()
         {
-            updateAllCorridors();
+            if (updateNeeded)
+            {
+                updateNeeded = false;
+                updateAllCorridors();
+            }
         }
 
         //iterate over all nodes to see if it must be connected
