@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,12 +12,53 @@ namespace PlanetarySurfaceStructures
         private string manufacturer1 = "K&K Advanced Orbit and Surface Structures";
         private string manufacturer3 = "K&K Life-Support Devision";
 
+        //create and the icons
+        private Texture2D icon_surface_structures = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_k_and_k = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_k_lifesupport = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_category_ls = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+
+        //set to false when an icon could not be loaded
+        private bool isValid = true;
+
         /**
          * Called when the script instance is being loaded
          */
         private void Awake()
         {
             GameEvents.onGUIEditorToolbarReady.Add(KKAOSS_Filter);
+
+            //load the icons
+            try
+            {
+                //load the icons
+                if (!icon_surface_structures.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSicon.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading KPBSicon");
+                    isValid = false;
+                }
+                if (!icon_k_and_k.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSbase.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading KPBSbase");
+                    isValid = false;
+                }
+                if (!icon_k_lifesupport.LoadImage(File.ReadAllBytes("Gamedata/PlanetaryBaseInc/BaseSystem/Icons/KPBSlifesupport.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading KPBSlifesupport");
+                    isValid = false;
+                }
+                if (!icon_category_ls.LoadImage(File.ReadAllBytes("Gamedata/PlanetaryBaseInc/BaseSystem/Icons/KPBSCategoryLifeSupport.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading KPBSCategoryLifeSupport");
+                    isValid = false;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("[KPBS] ERROR EXC loading Images" + e.Message);
+                isValid = false;
+            }
+
         }
 
         /**
@@ -115,49 +157,10 @@ namespace PlanetarySurfaceStructures
          */
         private void KKAOSS_Filter()
         {
-            //create and the icons
-            Texture2D icon_surface_structures = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-            Texture2D icon_k_and_k = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-            Texture2D icon_k_lifesupport = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-            Texture2D icon_category_ls = new Texture2D(32, 32, TextureFormat.ARGB32, false);
-
-            bool valid = true;
-
-            try
-            {
-                //load the icons
-                if (icon_surface_structures.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSicon.png")))
-                {
-                    Debug.Log("[KPBS] ERROR loading KPBSicon");
-                    return;
-                }
-                if (icon_k_and_k.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSbase.png")))
-                {
-                    Debug.Log("[KPBS] ERROR loading KPBSbase");
-                    return;
-                }
-                if (icon_k_lifesupport.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSlifesupport.png")))
-                {
-                    Debug.Log("[KPBS] ERROR loading KPBSlifesupport");
-                    return;
-                }
-                if (icon_category_ls.LoadImage(System.IO.File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSCategoryLifeSupport.png")))
-                {
-                    Debug.Log("[KPBS] ERROR loading KPBSCategoryLifeSupport");
-                    return;
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log("[KPBS] ERROR loading Images" + e.Message);
-                valid = false;
-            }
-
-            if (!valid)
+            if (!isValid)
             {
                 return;
             }
-
 
             //if the configuration is null
             if (KPBSConfiguration.Instance() == null) {

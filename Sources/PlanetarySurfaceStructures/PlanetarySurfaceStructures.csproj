@@ -48,11 +48,9 @@
     <Compile Include="DependentLight.cs" />
     <Compile Include="IVASwitcher.cs" />
     <Compile Include="KPBSConfiguration.cs" />
-    <Compile Include="ModuleKPBSAirfilter.cs" />
     <Compile Include="ModuleKPBSConverter.cs" />
     <Compile Include="ModuleKPBSModelSwitch.cs" />
     <Compile Include="ModuleCorridorNodes.cs" />
-    <Compile Include="ModuleKPBSWaterHarvester.cs" />
     <Compile Include="PlanetaryGreenhouse.cs" />
     <Compile Include="PlanetaryModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
