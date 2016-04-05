@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace PlanetarySurfaceStructures
 {
-    class ModuleCorridorNodes : PartModule
+    class ModuleKPBSCorridorNodes : PartModule
     {
         //the names of the nodes
         [KSPField]
@@ -14,8 +14,6 @@ namespace PlanetarySurfaceStructures
         [KSPField]
         public string transormNames = string.Empty;
 
-
-        private bool updateNeeded = false;
 
         //the names of the nodes for the replaces parts
         [KSPField]
@@ -41,6 +39,8 @@ namespace PlanetarySurfaceStructures
 
         //the list of transforms to replace
         List<ReplacedPart> replaceParts = new List<ReplacedPart>();
+
+        bool needsUpdate = false;
 
         bool editorChangeRegistered = false;
         bool flightChangeRegistered = false;
@@ -226,20 +226,20 @@ namespace PlanetarySurfaceStructures
 
         private void vesselModified(Vessel data)
         {
-            updateNeeded = true;
+            needsUpdate = true;
         }
 
         private void shipModified(ShipConstruct data)
         {
-            updateNeeded = true;
+            needsUpdate = true;
         }
 
         public void Update()
         {
-            if (updateNeeded)
+            if (needsUpdate)
             {
-                updateNeeded = false;
                 updateAllCorridors();
+                needsUpdate = false;
             }
         }
 

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 namespace PlanetarySurfaceStructures
 {
-    class IVASwitcher : PartModule
+    class ModuleKPBSIVASwitcher : PartModule
     {
         //the name of the packed internal
         [KSPField]
@@ -174,10 +169,12 @@ namespace PlanetarySurfaceStructures
             }
 
             //respawn the crew when it is in the part when loaded
-            if ((respawnCrew) && (this.vessel.loaded))
+            if ((respawnCrew) && (vessel.loaded))
             {
                 //Debug.Log("[KPBS] Crew spawned");
-                this.part.SpawnCrew();
+                //part.SpawnCrew();
+                part.RegisterCrew();
+                // TODO
                 respawnCrew = false;
             }
         }

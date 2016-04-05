@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace PlanetarySurfaceStructures
 {
-    class DependentLight : PartModule
+    class ModuleKPBSDependentLight : PartModule
     {
         //----------------KSPFields-----------------
 
