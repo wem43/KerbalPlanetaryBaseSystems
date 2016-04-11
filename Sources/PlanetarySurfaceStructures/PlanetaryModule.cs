@@ -32,7 +32,7 @@ namespace PlanetarySurfaceStructures
 		
 		/** Varaible defining if the animation is available in the editor */
         [KSPField]
-        public bool availableInEditor = false;
+        public bool availableInEditor = true;
 		
 		/** The range the animaiton is available from EVA */
         [KSPField]

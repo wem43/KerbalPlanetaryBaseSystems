@@ -12,6 +12,10 @@ namespace PlanetarySurfaceStructures
         [KSPField]
         public string extendedInternalName = "";
 
+        //the name of the extended internal
+        [KSPField]
+        public bool switchInEditor = false;
+
         //the module the animation is dependent on
         private PlanetaryModule dependent = null;
 
@@ -37,8 +41,6 @@ namespace PlanetarySurfaceStructures
 
             bool foundextended = (extendedInternalName == "");
             bool foundpacked = (packedInternalName == "");
-
-            //Debug.Log("[KPBS] OnAwake called");
 
             //find the internals for the packed and the extendet internals
             foreach (UrlDir.UrlConfig cfg in GameDatabase.Instance.GetConfigs("INTERNAL"))
@@ -70,21 +72,17 @@ namespace PlanetarySurfaceStructures
 
             if ((dependent != null))
             {
-                //switch the IVA when not in editor mode
-                if (state != StartState.Editor)
+                //switch to the extended internal
+                if (dependent.animationTime >= 0.9999f)
                 {
-                    //switch to the extended internal
-                    if (dependent.status.Equals("Deployed"))
-                    {
-                        SetVisibleInternal(extendedInternalNode, false);
-                        isInternalPacked = false;
-                        respawnCrew = true;
-                    }
-                    else
-                    {
-                        SetVisibleInternal(packedInternalNode, false);
-                        isInternalPacked = false;
-                    }
+                    SetVisibleInternal(extendedInternalNode, false);
+                    isInternalPacked = false;
+                    respawnCrew = true;
+                }
+                else
+                {
+                    SetVisibleInternal(packedInternalNode, false);
+                    isInternalPacked = false;
                 }
             }
             base.OnStart(state);
@@ -93,28 +91,28 @@ namespace PlanetarySurfaceStructures
         //switch to the internal with the given name
         private void SetVisibleInternal(ConfigNode intern, bool delay)
         {
-            //when the old internal exists, destroy it
-            if ((part != null) && (part.internalModel != null))
-            {  
-                Destroy(part.internalModel.gameObject);
-                part.internalModel = null;
-            }
-
-            //create a new internal when it is specified
-            if (intern != null)
+            if (HighLogic.LoadedSceneIsFlight || switchInEditor)
             {
-                part.partInfo.internalConfig = intern;
-                part.internalModel = part.AddInternalPart(intern);
-                if (delay)
+                //when the old internal exists, destroy it
+                if ((part != null) && (part.internalModel != null))
                 {
-                    part.internalModel.SetVisible(false);
-                    visibleCounter = 5;
+                    Destroy(part.internalModel.gameObject);
+                    part.internalModel = null;
                 }
-                part.CreateInternalModel();
-            }
-            else
-            {
 
+                //create a new internal when it is specified
+                if (intern != null)
+                {
+                    part.partInfo.internalConfig = intern;
+                    part.internalModel = part.AddInternalPart(intern);
+                    if (delay)
+                    {
+                        part.internalModel.SetVisible(false);
+                        visibleCounter = 5;
+                    }
+                    part.CreateInternalModel();
+                    part.internalModel.Initialize(part);
+                }
             }
         }
 
@@ -135,47 +133,45 @@ namespace PlanetarySurfaceStructures
             {
                 
                 //switch to the extended internal
-                if ((dependent.status.Equals("Deployed")) && (isInternalPacked))
+                if ((dependent.animationTime >= 0.9999f) && (isInternalPacked))
                 {
                     SetVisibleInternal(extendedInternalNode, true);
                     isInternalPacked = false;
                 }
-                else if ((!dependent.status.Equals("Deployed")) && (!isInternalPacked))
+                else if ((dependent.animationTime < 0.9999f) && (!isInternalPacked))
                 {
                     SetVisibleInternal(packedInternalNode, true);
                     isInternalPacked = true;
                 }
 
-            }
 
-            if (part.internalModel != null)
-            {
-                if (visibleCounter > 0)
+                if (part.internalModel != null)
                 {
-                    if (visibleCounter == 1)
+                    if (visibleCounter > 0)
                     {
-                        part.internalModel.SetVisible(true);
+                        if (visibleCounter == 1)
+                        {
+                            part.internalModel.SetVisible(true);
+                        }
+                        else
+                        {
+                            part.internalModel.SetVisible(false);
+                        }
+                        visibleCounter--;
                     }
-                    else
-                    {
-                        part.internalModel.SetVisible(false);
-                    }
-                    visibleCounter--;
                 }
-            }
-            else
-            {
-                visibleCounter = 0;
-            }
+                else
+                {
+                    visibleCounter = 0;
+                }
 
-            //respawn the crew when it is in the part when loaded
-            if ((respawnCrew) && (vessel.loaded))
-            {
-                //Debug.Log("[KPBS] Crew spawned");
-                //part.SpawnCrew();
-                part.RegisterCrew();
-                // TODO
-                respawnCrew = false;
+                //respawn the crew when it is in the part when loaded
+                if ((respawnCrew) && (vessel.loaded))
+                {
+                    //part.RegisterCrew();
+                    part.internalModel.SpawnCrew();
+                    respawnCrew = false;
+                }
             }
         }
     }

@@ -23,7 +23,7 @@ namespace PlanetarySurfaceStructures
         [KSPField]
         public bool availableInVessel = true;
         [KSPField]
-        public bool availableInEditor = false;
+        public bool availableInEditor = true;
         [KSPField]
         public float EVArange = 5f;
         //the layer of the animation
