@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Linq;
 using UnityEngine;
+
 
 namespace PlanetarySurfaceStructures 
 {
@@ -54,13 +52,45 @@ namespace PlanetarySurfaceStructures
         [KSPField]
         public int layer = 1;
 
-        //--------------persistent states----------------
+        //---------------------persistent states--------------------
         [KSPField(isPersistant = true)]
         public float animationTime;
         [KSPField(isPersistant = true)]
         public bool nextIsReverse;
         [KSPField(isPersistant = true)]
         public bool hasBeenInitialized = false;
+
+        //------------------------------------for changes in the IVA-------------------------
+
+        /** Varaible defining if the animation is available in EVA */
+        [KSPField]
+        public bool changeIVA = true;
+
+        //the name of the packed internal
+        [KSPField]
+        public string packedInternalName = "";
+
+        //the name of the extended internal
+        [KSPField]
+        public string extendedInternalName = "";
+
+        //the config nodes for the internal models
+        ConfigNode packedInternalNode = null;
+        ConfigNode extendedInternalNode = null;
+
+        //indicate that the packed internal is currently used
+        private bool isInternalPacked = true;
+
+        //timer to make IVA visible
+        private int visibleCounter = 0;
+
+        private bool firstUpdate = true;
+
+        //flag to indicate that the crew has to respawn
+        private bool respawnCrew = false;
+
+
+
 
         //----------------internal data-----------------
 
@@ -157,7 +187,45 @@ namespace PlanetarySurfaceStructures
 
         //----------------methods-----------------
 
-		/**
+        /**
+         * Called when the script instance is being loaded
+         */
+        public override void OnAwake()
+        {
+            base.OnAwake();
+
+            if ((extendedInternalName == "") && (packedInternalName == "")) {
+                changeIVA = false;
+            }
+
+            bool foundextended = (extendedInternalName == "");
+            bool foundpacked = (packedInternalName == "");
+
+            //find the internals for the packed and the extendet internals
+            foreach (UrlDir.UrlConfig cfg in GameDatabase.Instance.GetConfigs("INTERNAL"))
+            {
+                if ((cfg.name == extendedInternalName) && (!foundextended))
+                {
+                    extendedInternalNode = cfg.config;
+                    foundextended = true;
+                    Debug.Log("[KPBS] Extended Internal found: " + extendedInternalName);
+                }
+                if ((cfg.name == packedInternalName) && (!foundpacked))
+                {
+                    packedInternalNode = cfg.config;
+                    foundpacked = true;
+                    Debug.Log("[KPBS] Packed Internal found: " + packedInternalName);
+                }
+                if (foundextended && foundpacked)
+                {
+                    break;
+                }
+            }
+        }
+
+
+
+        /**
 		 * Called at the start. Initialize animation and state of this module
 		 */
         public override void OnStart(PartModule.StartState state)
@@ -173,13 +241,32 @@ namespace PlanetarySurfaceStructures
 				// Run Only on first launch
                 if (!hasBeenInitialized) 
                 {
-                    nextIsReverse = false;
-                    animationTime = 0f;
-                    deployAnim[animationName].normalizedTime = 0f;
+                    if (this.part.protoModuleCrew.Count() > crewCapcityRetracted)
+                    {
+                        nextIsReverse = true;
+                        animationTime = 0.999f;
+                        deployAnim[animationName].normalizedTime = 1f;
+                    }
+                    else
+                    {
+                        nextIsReverse = false;
+                        animationTime = 0f;
+                        deployAnim[animationName].normalizedTime = 0f;
+                    }
+
                     hasBeenInitialized = true;
                 }
 
-                if (nextIsReverse)
+                if (this.part.protoModuleCrew.Count() > crewCapcityRetracted)
+                {
+                    animationTime = 0.999f;
+                    deployAnim[animationName].speed = 1f;
+                    if (changeIVA) {
+                        respawnCrew = true;
+                    }
+                    
+                }
+                else if (nextIsReverse)
                 {
                     if (animationTime == 0f)
                     {
@@ -255,8 +342,6 @@ namespace PlanetarySurfaceStructures
 		 */
         public void Update()
         {
-            base.OnUpdate();
-
             if (!HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor)
             {
                 return;
@@ -273,21 +358,36 @@ namespace PlanetarySurfaceStructures
                     {
                         animationTime = 1f;
 						this.status = "Deployed";
-						
-						//update crew capacity and contract state
-						if (this.part.CrewCapacity != crewCapacityDeployed)
+
+                        //switch to the extended internal
+                        if (isInternalPacked)
+                        {
+                            if (changeIVA)
+                            {
+                                SetVisibleInternal(extendedInternalNode, true);
+                                isInternalPacked = false;
+                            } 
+                        }
+
+                        //update crew capacity and contract state
+                        if (this.part.CrewCapacity != crewCapacityDeployed)
 						{
 							this.part.CrewCapacity = crewCapacityDeployed;
-                            //if (this.vessel == FlightGlobals.ActiveVessel) {
-                                GameEvents.onVesselWasModified.Fire(vessel);
-                            //    GameEvents.onVesselChange.Fire(this.vessel);
-							//}
-							
+                            GameEvents.onVesselWasModified.Fire(vessel);
 						}
 						
                     }
                     else
                     {
+                        if ((!isInternalPacked))
+                        {
+                            if (changeIVA)
+                            {
+                                SetVisibleInternal(packedInternalNode, true);
+                                isInternalPacked = true;
+                            }
+                            
+                        }
                         animationTime = 0f;
 						this.status = "Retracted";
                     }
@@ -299,9 +399,19 @@ namespace PlanetarySurfaceStructures
                 else 
                 {
                     animationTime = deployAnim[animationName].normalizedTime;
-					
-					//update the status text
-					if (nextIsReverse)
+
+                    if ((!isInternalPacked))
+                    {
+                        if (changeIVA)
+                        {
+                            SetVisibleInternal(packedInternalNode, true);
+                            isInternalPacked = true;
+                        }
+                        
+                    }
+
+                    //update the status text
+                    if (nextIsReverse)
 					{
 						this.status = "Deploying..";
 					}
@@ -315,10 +425,27 @@ namespace PlanetarySurfaceStructures
                     {
                         this.part.CrewCapacity = crewCapcityRetracted;
                         GameEvents.onVesselWasModified.Fire(vessel);
-                        //if (this.vessel == FlightGlobals.ActiveVessel) {
-                        //	GameEvents.onVesselChange.Fire(this.vessel);
-                        //}
                     } 
+                }
+
+                if (part.internalModel != null)
+                {
+                    if (visibleCounter > 0)
+                    {
+                        if (visibleCounter == 1)
+                        {
+                            part.internalModel.SetVisible(true);
+                        }
+                        else
+                        {
+                            part.internalModel.SetVisible(false);
+                        }
+                        visibleCounter--;
+                    }
+                }
+                else
+                {
+                    visibleCounter = 0;
                 }
             }
 
@@ -339,10 +466,64 @@ namespace PlanetarySurfaceStructures
                     toggleAnimation();    
                 }
 			}
+
+            //respawn the crew when it is in the part when loaded
+            if ((changeIVA) && (respawnCrew) && (status.Equals("Deployed")) && (vessel != null) && (vessel.loaded))
+            {
+                part.internalModel.SpawnCrew();
+
+                /*Debug.Log("[KPBS] Adding portraits of kerbals");
+                foreach (InternalSeat seat in part.internalModel.seats)
+                {
+                    Debug.Log("[KPBS] Seat");
+                    if ((seat != null) && (seat.kerbalRef != null))
+                    {
+                        Debug.Log("[KPBS] Seat filled with: " + seat.kerbalRef.name);
+                        seat.kerbalRef.SetVisibleInPortrait(true);
+                        KSP.UI.Screens.Flight.KerbalPortraitGallery.Instance.RegisterActiveCrew(seat.kerbalRef);
+                    }
+                }*/
+                respawnCrew = false;
+            }
         }
 
-		
-		/**
+        public void OnDestroy()
+        {
+            //we have to reset the iva to the original one when the part is destroyed to have the right one when reverting to the editor
+            part.partInfo.internalConfig = packedInternalNode;
+            packedInternalNode = null;
+            extendedInternalNode = null;
+        }
+
+        //switch to the internal with the given name
+        private void SetVisibleInternal(ConfigNode intern, bool delay)
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                //when the old internal exists, destroy it
+                if ((part != null) && (part.internalModel != null))
+                {
+                    Destroy(part.internalModel.gameObject);
+                    part.internalModel = null;
+                }
+
+                //create a new internal when it is specified
+                if (intern != null)
+                {
+                    part.partInfo.internalConfig = intern;
+                    part.internalModel = part.AddInternalPart(intern);
+                    if (delay)
+                    {
+                        part.internalModel.SetVisible(false);
+                        visibleCounter = 5;
+                    }
+                    part.CreateInternalModel();
+                    part.internalModel.Initialize(part);
+                }
+            }
+        }
+
+        /**
 		 * Update all the contracts with the new crew capacity
 		 */
         private void updateContracts()

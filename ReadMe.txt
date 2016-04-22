@@ -6,8 +6,7 @@ KERBAL PLANETARY BASE INC.
 INSTALLATION
 ---------------
 	To install, simply copy the gamedata folder into your Kerbal Space Program folder.
-	When you already have another version of this mod installed, delete this folder first. (As this is still in
-	heavy development and may have some changes in the folder structure)
+	When you already have another version of this mod installed, delete this folder first.
 
 CHANGE FILTER
 ---------------

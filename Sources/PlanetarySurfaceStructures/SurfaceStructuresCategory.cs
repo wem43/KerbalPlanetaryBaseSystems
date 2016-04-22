@@ -46,12 +46,12 @@ namespace PlanetarySurfaceStructures
                     Debug.Log("[KPBS] ERROR loading KPBSbase");
                     isValid = false;
                 }
-                if (!icon_k_lifesupport.LoadImage(File.ReadAllBytes("Gamedata/PlanetaryBaseInc/BaseSystem/Icons/KPBSlifesupport.png")))
+                if (!icon_k_lifesupport.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSlifesupport.png")))
                 {
                     Debug.Log("[KPBS] ERROR loading KPBSlifesupport");
                     isValid = false;
                 }
-                if (!icon_category_ls.LoadImage(File.ReadAllBytes("Gamedata/PlanetaryBaseInc/BaseSystem/Icons/KPBSCategoryLifeSupport.png")))
+                if (!icon_category_ls.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/KPBSCategoryLifeSupport.png")))
                 {
                     Debug.Log("[KPBS] ERROR loading KPBSCategoryLifeSupport");
                     isValid = false;

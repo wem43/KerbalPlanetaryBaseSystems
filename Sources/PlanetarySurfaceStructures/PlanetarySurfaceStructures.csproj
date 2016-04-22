@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{46BBBC5D-9297-4AC6-A1D3-7D416DADA462}</ProjectGuid>
+    <ProjectGuid>{27BB103E-2FDD-4C57-8594-E604485D6648}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PlanetarySurfaceStructures</RootNamespace>
@@ -51,9 +51,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
@@ -64,7 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ModuleKPBSDependentLight.cs" />
-    <Compile Include="ModuleKPBSIVASwitcher.cs" />
     <Compile Include="KPBSConfiguration.cs" />
     <Compile Include="ModuleKPBSCorridorNodes.cs" />
     <Compile Include="ModuleKPBSConverter.cs" />
