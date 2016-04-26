@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -68,29 +69,18 @@ namespace PlanetarySurfaceStructures
 
         //the name of the packed internal
         [KSPField]
-        public string packedInternalName = "";
+        public string packedInternalName = "packed";
 
         //the name of the extended internal
         [KSPField]
-        public string extendedInternalName = "";
-
-        //the config nodes for the internal models
-        ConfigNode packedInternalNode = null;
-        ConfigNode extendedInternalNode = null;
-
+        public string extendedInternalName = "extended";
+        
         //indicate that the packed internal is currently used
         private bool isInternalPacked = true;
 
-        //timer to make IVA visible
-        private int visibleCounter = 0;
+        private int numKerbals;
 
-        private bool firstUpdate = true;
-
-        //flag to indicate that the crew has to respawn
-        private bool respawnCrew = false;
-
-
-
+        private bool observeIVA = false;
 
         //----------------internal data-----------------
 
@@ -109,6 +99,7 @@ namespace PlanetarySurfaceStructures
             if ((availableInVessel) && (!status.Equals("Deployed") || (this.part.protoModuleCrew.Count() <= crewCapcityRetracted))) {
                 toggleAnimation();
             }
+            
         }
 
 		/**
@@ -188,54 +179,21 @@ namespace PlanetarySurfaceStructures
         //----------------methods-----------------
 
         /**
-         * Called when the script instance is being loaded
-         */
-        public override void OnAwake()
-        {
-            base.OnAwake();
-
-            if ((extendedInternalName == "") && (packedInternalName == "")) {
-                changeIVA = false;
-            }
-
-            bool foundextended = (extendedInternalName == "");
-            bool foundpacked = (packedInternalName == "");
-
-            //find the internals for the packed and the extendet internals
-            foreach (UrlDir.UrlConfig cfg in GameDatabase.Instance.GetConfigs("INTERNAL"))
-            {
-                if ((cfg.name == extendedInternalName) && (!foundextended))
-                {
-                    extendedInternalNode = cfg.config;
-                    foundextended = true;
-                    Debug.Log("[KPBS] Extended Internal found: " + extendedInternalName);
-                }
-                if ((cfg.name == packedInternalName) && (!foundpacked))
-                {
-                    packedInternalNode = cfg.config;
-                    foundpacked = true;
-                    Debug.Log("[KPBS] Packed Internal found: " + packedInternalName);
-                }
-                if (foundextended && foundpacked)
-                {
-                    break;
-                }
-            }
-        }
-
-
-
-        /**
 		 * Called at the start. Initialize animation and state of this module
 		 */
         public override void OnStart(PartModule.StartState state)
         {
             base.OnStart(state);
 
+            isInternalPacked = true;
+            ChangeExtendedVisible();
+
             //get the deploy animation
             deployAnim = part.FindModelAnimators(animationName).FirstOrDefault();
 
-			//Only initialize when an animation is available
+            numKerbals = this.part.protoModuleCrew.Count();
+
+            //Only initialize when an animation is available
             if (deployAnim != null) 
             {
 				// Run Only on first launch
@@ -261,10 +219,6 @@ namespace PlanetarySurfaceStructures
                 {
                     animationTime = 0.999f;
                     deployAnim[animationName].speed = 1f;
-                    if (changeIVA) {
-                        respawnCrew = true;
-                    }
-                    
                 }
                 else if (nextIsReverse)
                 {
@@ -364,8 +318,9 @@ namespace PlanetarySurfaceStructures
                         {
                             if (changeIVA)
                             {
-                                SetVisibleInternal(extendedInternalNode, true);
+                                //SetVisibleInternal(extendedInternalTransform, packedInternalTransform);
                                 isInternalPacked = false;
+                                ChangeExtendedVisible();
                             } 
                         }
 
@@ -383,8 +338,9 @@ namespace PlanetarySurfaceStructures
                         {
                             if (changeIVA)
                             {
-                                SetVisibleInternal(packedInternalNode, true);
+                                //SetVisibleInternal(packedInternalTransform, extendedInternalTransform);
                                 isInternalPacked = true;
+                                ChangeExtendedVisible();
                             }
                             
                         }
@@ -404,8 +360,10 @@ namespace PlanetarySurfaceStructures
                     {
                         if (changeIVA)
                         {
-                            SetVisibleInternal(packedInternalNode, true);
+                            //SetVisibleInternal(packedInternalTransform, extendedInternalTransform);
                             isInternalPacked = true;
+                            ChangeExtendedVisible();
+                            
                         }
                         
                     }
@@ -427,26 +385,6 @@ namespace PlanetarySurfaceStructures
                         GameEvents.onVesselWasModified.Fire(vessel);
                     } 
                 }
-
-                if (part.internalModel != null)
-                {
-                    if (visibleCounter > 0)
-                    {
-                        if (visibleCounter == 1)
-                        {
-                            part.internalModel.SetVisible(true);
-                        }
-                        else
-                        {
-                            part.internalModel.SetVisible(false);
-                        }
-                        visibleCounter--;
-                    }
-                }
-                else
-                {
-                    visibleCounter = 0;
-                }
             }
 
             //show/hide GUI element depending on the crew count
@@ -459,92 +397,76 @@ namespace PlanetarySurfaceStructures
                 Events["toggleAnimation"].active = true;
             }
 
-			//check if the part has to be deployed because of too many kerbals inside
-			if (this.part.protoModuleCrew.Count() > this.part.CrewCapacity) {
+            int newCrew = this.part.protoModuleCrew.Count();
+
+            //check if the part has to be deployed because of too many kerbals inside
+            if (newCrew > this.part.CrewCapacity) {
 				if ((!status.Equals("Deployed")) && (!status.Equals("Deploying..")))
                 {
                     toggleAnimation();    
                 }
 			}
 
-            //respawn the crew when it is in the part when loaded
-            if ((changeIVA) && (respawnCrew) && (status.Equals("Deployed")) && (vessel != null) && (vessel.loaded))
-            {
-                part.internalModel.SpawnCrew();
+            //SetExtendedVisible(!isInternalPacked);
 
-                /*Debug.Log("[KPBS] Adding portraits of kerbals");
-                foreach (InternalSeat seat in part.internalModel.seats)
-                {
-                    Debug.Log("[KPBS] Seat");
-                    if ((seat != null) && (seat.kerbalRef != null))
-                    {
-                        Debug.Log("[KPBS] Seat filled with: " + seat.kerbalRef.name);
-                        seat.kerbalRef.SetVisibleInPortrait(true);
-                        KSP.UI.Screens.Flight.KerbalPortraitGallery.Instance.RegisterActiveCrew(seat.kerbalRef);
-                    }
-                }*/
-                respawnCrew = false;
+            if (newCrew != numKerbals)
+            {
+                //Debug.Log("[KPBS] crew has changed.");
+                numKerbals = newCrew;
+                ChangeExtendedVisible();
             }
+
+            CheckIVAState();
         }
 
         public void OnDestroy()
         {
             //we have to reset the iva to the original one when the part is destroyed to have the right one when reverting to the editor
-            part.partInfo.internalConfig = packedInternalNode;
-            packedInternalNode = null;
-            extendedInternalNode = null;
+            isInternalPacked = true;
+            ChangeExtendedVisible();
         }
 
         //switch to the internal with the given name
-        private void SetVisibleInternal(ConfigNode intern, bool delay)
+        private void ChangeExtendedVisible()
         {
-            if (HighLogic.LoadedSceneIsFlight)
+            if (part.internalModel != null)
             {
-                //when the old internal exists, destroy it
-                if ((part != null) && (part.internalModel != null))
-                {
-                    Destroy(part.internalModel.gameObject);
-                    part.internalModel = null;
-                }
+                Transform extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
+                Transform packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
 
-                //create a new internal when it is specified
-                if (intern != null)
+                if (extendedInternalTransform != null)
                 {
-                    part.partInfo.internalConfig = intern;
-                    part.internalModel = part.AddInternalPart(intern);
-                    if (delay)
-                    {
-                        part.internalModel.SetVisible(false);
-                        visibleCounter = 5;
-                    }
-                    part.CreateInternalModel();
-                    part.internalModel.Initialize(part);
+                    extendedInternalTransform.gameObject.SetActive(!isInternalPacked);
+                }
+                if (packedInternalTransform != null)
+                {
+                    packedInternalTransform.gameObject.SetActive(isInternalPacked);
                 }
             }
+            observeIVA = true;
         }
 
-        /**
-		 * Update all the contracts with the new crew capacity
-		 */
-        private void updateContracts()
+        //check the state of the IVA because it changes when a kerbal enters a part
+        private void CheckIVAState()
         {
-			//go through all contracts and trigger them to update their status
-            foreach (Contracts.Contract contract in Contracts.ContractSystem.Instance.Contracts)
+            if ((observeIVA) && (part.internalModel != null))
             {
-                contract.Reset();
-            }
-        }
+                observeIVA = false;
 
-        /**
-         * Interface to listen to changes in the state of the deployable module
-         */
-        public interface DeployableModuleStateChangeListener
-        {
-            /**
-             * Function called when the state of this module has changed
-             * @param status: The new status of this module
-             */
-            void moduleStateChanged(string status);
+                Transform extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
+                Transform packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
+
+                if ((extendedInternalTransform != null) && (extendedInternalTransform.gameObject.activeSelf == isInternalPacked))
+                {
+                    extendedInternalTransform.gameObject.SetActive(!isInternalPacked);
+                    observeIVA = true;
+                }
+                if ((packedInternalTransform != null) && (packedInternalTransform.gameObject.activeSelf != isInternalPacked))
+                {
+                    packedInternalTransform.gameObject.SetActive(isInternalPacked);
+                    observeIVA = true;
+                }
+            }
         }
     }
 }
