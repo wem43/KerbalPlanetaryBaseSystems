@@ -228,7 +228,7 @@ namespace PlanetarySurfaceStructures
                 if ((dependent != null))
                 {
                     //set the animation to the beginning when the state is not "Deployed"
-                    if (dependent.animationTime < 0.9999f)
+                    if (dependent.animationTime < 0.999f)
                     {
                         //disable the GUI
                         Events["toggleAnimation"].guiActiveEditor = false;
