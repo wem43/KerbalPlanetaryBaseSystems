@@ -78,10 +78,6 @@ namespace PlanetarySurfaceStructures
         //indicate that the packed internal is currently used
         private bool isInternalPacked = true;
 
-        private int numKerbals;
-
-        private bool observeIVA = false;
-
         //----------------internal data-----------------
 
         //the stored animation
@@ -184,14 +180,12 @@ namespace PlanetarySurfaceStructures
         public override void OnStart(PartModule.StartState state)
         {
             base.OnStart(state);
+            part.CheckTransferDialog();
 
             isInternalPacked = true;
-            ChangeExtendedVisible();
 
             //get the deploy animation
             deployAnim = part.FindModelAnimators(animationName).FirstOrDefault();
-
-            numKerbals = this.part.protoModuleCrew.Count();
 
             //Only initialize when an animation is available
             if (deployAnim != null) 
@@ -199,7 +193,7 @@ namespace PlanetarySurfaceStructures
 				// Run Only on first launch
                 if (!hasBeenInitialized) 
                 {
-                    if (this.part.protoModuleCrew.Count() > crewCapcityRetracted)
+                    if (part.protoModuleCrew.Count() > crewCapcityRetracted)
                     {
                         nextIsReverse = true;
                         animationTime = 0.999f;
@@ -215,7 +209,7 @@ namespace PlanetarySurfaceStructures
                     hasBeenInitialized = true;
                 }
 
-                if (this.part.protoModuleCrew.Count() > crewCapcityRetracted)
+                if (part.protoModuleCrew.Count() > crewCapcityRetracted)
                 {
                     animationTime = 0.999f;
                     deployAnim[animationName].speed = 1f;
@@ -230,12 +224,12 @@ namespace PlanetarySurfaceStructures
                     if (animationTime == 1f)
                     {
                         status = "Deployed";
-                        this.part.CrewCapacity = crewCapacityDeployed;
+                        part.CrewCapacity = crewCapacityDeployed;
                     }
                     else
                     {
                         status = "Deploying..";
-                        this.part.CrewCapacity = crewCapacityDeployed;
+                        part.CrewCapacity = crewCapacityDeployed;
                     }
                     deployAnim[animationName].speed = 1f;
                 }
@@ -311,23 +305,23 @@ namespace PlanetarySurfaceStructures
                     if (nextIsReverse)
                     {
                         animationTime = 1f;
-						this.status = "Deployed";
+						status = "Deployed";
 
                         //switch to the extended internal
                         if (isInternalPacked)
                         {
                             if (changeIVA)
                             {
-                                //SetVisibleInternal(extendedInternalTransform, packedInternalTransform);
                                 isInternalPacked = false;
-                                ChangeExtendedVisible();
                             } 
                         }
 
                         //update crew capacity and contract state
-                        if (this.part.CrewCapacity != crewCapacityDeployed)
+                        if (part.CrewCapacity != crewCapacityDeployed)
 						{
-							this.part.CrewCapacity = crewCapacityDeployed;
+							part.CrewCapacity = crewCapacityDeployed;
+                            //part.CheckTransferDialog();
+                            //part.Ch
                             GameEvents.onVesselWasModified.Fire(vessel);
 						}
 						
@@ -338,14 +332,12 @@ namespace PlanetarySurfaceStructures
                         {
                             if (changeIVA)
                             {
-                                //SetVisibleInternal(packedInternalTransform, extendedInternalTransform);
                                 isInternalPacked = true;
-                                ChangeExtendedVisible();
                             }
                             
                         }
                         animationTime = 0f;
-						this.status = "Retracted";
+						status = "Retracted";
                     }
                     
 					//set the normalized time of the animation 
@@ -360,35 +352,32 @@ namespace PlanetarySurfaceStructures
                     {
                         if (changeIVA)
                         {
-                            //SetVisibleInternal(packedInternalTransform, extendedInternalTransform);
                             isInternalPacked = true;
-                            ChangeExtendedVisible();
-                            
-                        }
-                        
+                        }                       
                     }
 
                     //update the status text
                     if (nextIsReverse)
 					{
-						this.status = "Deploying..";
+						status = "Deploying..";
 					}
 					else 
 					{
-						this.status = "Retracting..";
+						status = "Retracting..";
 					}
 					
 					//update crew capacity and contract state
-					if (this.part.CrewCapacity != crewCapcityRetracted)
+					if (part.CrewCapacity != crewCapcityRetracted)
                     {
-                        this.part.CrewCapacity = crewCapcityRetracted;
+                        part.CrewCapacity = crewCapcityRetracted;
+                        //part.CheckTransferDialog();
                         GameEvents.onVesselWasModified.Fire(vessel);
                     } 
                 }
             }
 
             //show/hide GUI element depending on the crew count
-            if (this.part.protoModuleCrew.Count() > crewCapcityRetracted)
+            if (part.protoModuleCrew.Count() > crewCapcityRetracted)
             {
                 Events["toggleAnimation"].active = false;
             }
@@ -397,24 +386,15 @@ namespace PlanetarySurfaceStructures
                 Events["toggleAnimation"].active = true;
             }
 
-            int newCrew = this.part.protoModuleCrew.Count();
+            int newCrew = part.protoModuleCrew.Count();
 
             //check if the part has to be deployed because of too many kerbals inside
-            if (newCrew > this.part.CrewCapacity) {
+            if (newCrew > part.CrewCapacity) {
 				if ((!status.Equals("Deployed")) && (!status.Equals("Deploying..")))
                 {
                     toggleAnimation();    
                 }
 			}
-
-            //SetExtendedVisible(!isInternalPacked);
-
-            if (newCrew != numKerbals)
-            {
-                //Debug.Log("[KPBS] crew has changed.");
-                numKerbals = newCrew;
-                ChangeExtendedVisible();
-            }
 
             CheckIVAState();
         }
@@ -423,31 +403,30 @@ namespace PlanetarySurfaceStructures
         {
             //we have to reset the iva to the original one when the part is destroyed to have the right one when reverting to the editor
             isInternalPacked = true;
-            ChangeExtendedVisible();
+            CheckIVAState();
         }
 
         //switch to the internal with the given name
-        private void ChangeExtendedVisible()
+        private void CheckIVAState()
         {
             if (part.internalModel != null)
             {
                 Transform extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
                 Transform packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
 
-                if (extendedInternalTransform != null)
+                if ((extendedInternalTransform != null) && (extendedInternalTransform.gameObject.activeSelf == isInternalPacked))
                 {
                     extendedInternalTransform.gameObject.SetActive(!isInternalPacked);
                 }
-                if (packedInternalTransform != null)
+                if ((packedInternalTransform != null) && (packedInternalTransform.gameObject.activeSelf != isInternalPacked))
                 {
                     packedInternalTransform.gameObject.SetActive(isInternalPacked);
                 }
             }
-            observeIVA = true;
         }
 
         //check the state of the IVA because it changes when a kerbal enters a part
-        private void CheckIVAState()
+        /*private void CheckIVAState()
         {
             if ((observeIVA) && (part.internalModel != null))
             {
@@ -467,6 +446,6 @@ namespace PlanetarySurfaceStructures
                     observeIVA = true;
                 }
             }
-        }
+        }*/
     }
 }
