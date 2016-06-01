@@ -8,7 +8,10 @@ namespace PlanetarySurfaceStructures
 
         //the names of the transforms
         [KSPField]
-        public string transormNames = string.Empty;
+        public string transformNames = string.Empty;
+
+        [KSPField]
+        public string transformVisibleNames = string.Empty;
 
         //--------------persistent states----------------
         [KSPField(isPersistant = true)]
@@ -17,6 +20,8 @@ namespace PlanetarySurfaceStructures
         //the list of models
         List<ModelTransforms> models;
 
+        List<string> visibleNames;
+
         public bool initialized = false;
 
         //the part that is enabled and disabled
@@ -24,13 +29,15 @@ namespace PlanetarySurfaceStructures
         {
             base.OnStart(state);
 
-            string[] transformGroupNames = transormNames.Split(',');
+            string[] transformGroupNames = transformNames.Split(',');
+            string[] transformGroupVisibleNames = transformVisibleNames.Split(',');
             models = new List<ModelTransforms>();
+            visibleNames = new List<string>();
 
             //----------------------------------------------------------
             //create the list of transforms to be made switchable
             //----------------------------------------------------------
-
+            int i = 0;
             foreach (string transformName in transformGroupNames)
             {
                 name = transformName.Trim();
@@ -43,7 +50,39 @@ namespace PlanetarySurfaceStructures
                 mt.transforms.AddRange(transforms);
 
                 models.Add(mt);
+                if (transformGroupVisibleNames.Length == transformGroupNames.Length) {
+                    visibleNames.Add(transformGroupVisibleNames[i]);
+                }
+                else
+                {
+                    visibleNames.Add(transformGroupNames[i]);
+                }
+                i++;
             }
+
+            if (models.Count < 2)
+            {
+                Events["toggleModel"].active = false;
+                Events["toggleModelNext"].active = false;
+                Events["toggleModelPrev"].active = false;
+            }
+            else if (models.Count == 2)
+            {
+                Events["toggleModel"].active = true;
+                Events["toggleModel"].guiName = "Switch to: " + getName(numModel + 1);
+                Events["toggleModelNext"].active = false;
+                Events["toggleModelPrev"].active = false;
+            }
+            else if (models.Count > 2)
+            {
+                Events["toggleModel"].active = false;
+                Events["toggleModelNext"].active = true;
+                Events["toggleModelNext"].guiName = "Next: " + getName(numModel + 1);
+                Events["toggleModelPrev"].active = true;
+                Events["toggleModelPrev"].guiName = "Previous: " + getName(numModel - 1);
+            }
+            
+
 
             if (!HighLogic.LoadedSceneIsEditor)
             {
@@ -75,8 +114,60 @@ namespace PlanetarySurfaceStructures
             {
                 numModel = 0;
             }
+            Events["toggleModel"].guiName = "Switch to: " + getName(numModel + 1);
             updateActiveModel();
         }
+
+        /**
+         * Toggle the visible part
+         */
+        [KSPEvent(name = "toggleModelNext", guiName = "Next: ", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
+        public void toggleModelNext()
+        {
+            numModel++;
+            if (numModel >= models.Count)
+            {
+                numModel = 0;
+            }
+            Events["toggleModelNext"].guiName = "Next: " + getName(numModel + 1);
+            Events["toggleModelPrev"].guiName = "Previous: " + getName(numModel - 1);
+            updateActiveModel();
+        }
+
+        /**
+         * Toggle the visible part
+         */
+        [KSPEvent(name = "toggleModelPrev", guiName = "Previous: ", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
+        public void toggleModelPrev()
+        {
+            numModel--;
+            if (numModel < 0)
+            {
+                numModel = models.Count-1;
+            }
+            Events["toggleModelNext"].guiName = "Next: " + getName(numModel + 1);
+            Events["toggleModelPrev"].guiName = "Previous: " + getName(numModel - 1);
+            updateActiveModel();
+        }
+
+        private string getName(int index)
+        {
+            if ((visibleNames.Count > 0) && (visibleNames.Count == models.Count))
+            {
+                if (index < 0)
+                {
+                    index += visibleNames.Count;
+                }
+                else if (index >= models.Count)
+                {
+                    index -= visibleNames.Count;
+                }
+
+                return visibleNames[index];
+            }
+            return "";
+        }
+
 
         /**
          * Update which model are active or inactive
