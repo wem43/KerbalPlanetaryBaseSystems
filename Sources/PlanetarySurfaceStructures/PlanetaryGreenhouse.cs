@@ -235,52 +235,55 @@ namespace PlanetarySurfaceStructures
             newRecipe.TakeAmount = 1;// (float)rate;
 
             //add the inputs to the recipe
-            foreach (ResourceRatio res in inputList)
+            //foreach (ResourceRatio res in inputList)
+            for (int i = 0; i < inputList.Count; i++)
             {
                 
 
-                if (useGrowthPromoter || !res.ResourceName.Equals(boosterName))
+                if (useGrowthPromoter || !inputList[i].ResourceName.Equals(boosterName))
                 {
                     ResourceRatio newRes = new ResourceRatio();
-                    newRes.ResourceName = res.ResourceName;
-                    newRes.FlowMode = res.FlowMode;
-                    newRes.Ratio = res.Ratio * rate;
-                    newRes.DumpExcess = res.DumpExcess;
+                    newRes.ResourceName = inputList[i].ResourceName;
+                    newRes.FlowMode = inputList[i].FlowMode;
+                    newRes.Ratio = inputList[i].Ratio * rate;
+                    newRes.DumpExcess = inputList[i].DumpExcess;
                     newRecipe.Inputs.Add(newRes);
                 }
             }
             //add the outputs to the recipe
-            foreach (ResourceRatio res in outputList)
+            //foreach (ResourceRatio res in outputList)
+            for (int i = 0; i < outputList.Count; i++)
             {
                 ResourceRatio newRes = new ResourceRatio();
-                newRes.ResourceName = res.ResourceName;
-                newRes.FlowMode = res.FlowMode;
-                newRes.DumpExcess = res.DumpExcess;
+                newRes.ResourceName = outputList[i].ResourceName;
+                newRes.FlowMode = outputList[i].FlowMode;
+                newRes.DumpExcess = outputList[i].DumpExcess;
 
                 //when we have the main resource and the fertilizer active
-                if (useGrowthPromoter && res.ResourceName.Equals(boostedOutputName))
+                if (useGrowthPromoter && outputList[i].ResourceName.Equals(boostedOutputName))
                 {
-                    newRes.Ratio = res.Ratio * rate * fertilizerBenefit;
+                    newRes.Ratio = outputList[i].Ratio * rate * fertilizerBenefit;
                 }
                 else
                 {
-                    newRes.Ratio = res.Ratio * rate;
+                    newRes.Ratio = outputList[i].Ratio * rate;
                 }  
 
                 newRecipe.Outputs.Add(newRes);
             }
 
             //only add the fertilizer as a requirement when it is used
-            foreach (ResourceRatio res in reqList)
+            //foreach (ResourceRatio res in reqList)
+            for (int i = 0; i < reqList.Count; i++)
             {
-                if (res.ResourceName.Equals(boosterName))
+                if (reqList[i].ResourceName.Equals(boosterName))
                 {
                     if (useGrowthPromoter) {
-                        newRecipe.Requirements.Add(res);
+                        newRecipe.Requirements.Add(reqList[i]);
                     }
                 }
                 else {
-                    newRecipe.Requirements.Add(res);
+                    newRecipe.Requirements.Add(reqList[i]);
                 }
             }
 
@@ -311,9 +314,9 @@ namespace PlanetarySurfaceStructures
 
             effText = ((int)(maxProductionRate * 100.0f)).ToString() + "%";
 
-            if (this.part.protoModuleCrew.Count() < minimalCrew)
+            if (part.protoModuleCrew.Count() < minimalCrew)
             {
-                gHstatus = "No Crew! (" + this.part.protoModuleCrew.Count() + "/" + minimalCrew + ")";
+                gHstatus = "No Crew! (" + part.protoModuleCrew.Count() + "/" + minimalCrew + ")";
             }
             else
             {
@@ -345,9 +348,9 @@ namespace PlanetarySurfaceStructures
 
                 effText = ((int)(maxProductionRate * 100.0f)).ToString() + "%";
 
-                if (this.part.protoModuleCrew.Count() < minimalCrew)
+                if (part.protoModuleCrew.Count() < minimalCrew)
                 {
-                    gHstatus = "No Crew! (" + this.part.protoModuleCrew.Count() + "/" + minimalCrew + ")";
+                    gHstatus = "No Crew! (" + part.protoModuleCrew.Count() + "/" + minimalCrew + ")";
                 }
                 else
                 {
@@ -361,9 +364,10 @@ namespace PlanetarySurfaceStructures
          */
         private void initResources()
         {
-            foreach (ResourceRatio res in inputList)
+            //foreach (ResourceRatio res in inputList)
+            for (int i = 0; i < inputList.Count; i++)
             {
-                if (res.ResourceName.Equals(boosterName))
+                if (inputList[i].ResourceName.Equals(boosterName))
                 {
                     fertilizerFound = true;
                 }
@@ -375,7 +379,7 @@ namespace PlanetarySurfaceStructures
          */
         private void setEfficiency()
         {
-            maxProductionRate = minimalRate + (this.part.protoModuleCrew.Count() - minimalCrew) * efficiencyFactor;
+            maxProductionRate = minimalRate + (part.protoModuleCrew.Count() - minimalCrew) * efficiencyFactor;
             if (maxProductionRate < 0.0f)
             {
                 maxProductionRate = 0.0f;

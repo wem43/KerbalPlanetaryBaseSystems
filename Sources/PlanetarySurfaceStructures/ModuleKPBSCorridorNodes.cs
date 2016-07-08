@@ -49,6 +49,7 @@ namespace PlanetarySurfaceStructures
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
+            Debug.Log("[KPBS] Corridor OnStart");
 
             if (HighLogic.LoadedSceneIsEditor)
             {
@@ -106,12 +107,14 @@ namespace PlanetarySurfaceStructures
             }
 
             int num = 0;
-            foreach (string nodeName in nodenames)
-            {
-                AttachNode node = part.findAttachNode(nodeName);
 
+            for (int i = 0; i < nodenames.Length; i++)
+            {
+                Debug.Log("[KPBS] DD 1");
+                AttachNode node = part.findAttachNode(nodenames[i]);
                 List<Transform> transforms = new List<Transform>();
                 for (int k = 0; k < transformnames[num].Length; k++) {
+                    Debug.Log("[KPBS] DD 2");
                     transforms.AddRange(part.FindModelTransforms(transformnames[num][k]));
                 }
 
@@ -123,7 +126,7 @@ namespace PlanetarySurfaceStructures
                     corridor.node = node;
                     corridor.transforms = transforms;
 
-                    if ((allowSurfaceAttach) && (surfaceAttachNode == nodeName) && (part.srfAttachNode != null))
+                    if ((allowSurfaceAttach) && (surfaceAttachNode == nodenames[i]) && (part.srfAttachNode != null))
                     {                        
                         corridor.isSurfaceAttachPoint = true;
                     }
@@ -151,10 +154,8 @@ namespace PlanetarySurfaceStructures
                 replaceTransformGroupNames = replaceTransformNames.Split(',');
                 replaceNodeGroupNames = replaceNodeNames.Split(',');
 
-
                 if (replaceNodeGroupNames.Length == replaceTransformGroupNames.Length)
                 {
-
                     //split up all the name for the groups
                     for (int i = 0; i < replaceNodeGroupNames.Length; i++)
                     {
@@ -177,22 +178,23 @@ namespace PlanetarySurfaceStructures
 
                     //for all transform groups
                     num = 0;
-                    foreach (string[] tNames in replacetransformnames)
+                    //foreach (string[] tNames in replacetransformnames)
+                    for (int i = 0; i < replacetransformnames.Count; i++)
                     {
-
-
                         List<Transform> rTransforms = new List<Transform>();
                         List<AttachNode> rAttachnodes = new List<AttachNode>();
 
-                        foreach (string tName in tNames)
+                        //foreach (string tName in replacetransformnames[i])
+                        for (int j = 0; j < replacetransformnames[i].Length; j++)
                         {
-                            Debug.Log("[KPBS] Replace Tranform Name: " + tName);
-                            rTransforms.AddRange(part.FindModelTransforms(tName));
+                            Debug.Log("[KPBS] Replace Tranform Name: " + replacetransformnames[i][j]);
+                            rTransforms.AddRange(part.FindModelTransforms(replacetransformnames[i][j]));
                         }
-                        foreach (string nName in replacenodenames[num])
+                        //foreach (string nName in replacenodenames[num])
+                        for (int j = 0; j < replacenodenames[num].Length; j++)
                         {
-                            Debug.Log("[KPBS] Replace Node Name: " + nName);
-                            rAttachnodes.Add(part.findAttachNode(nName));
+                            Debug.Log("[KPBS] Replace Node Name: " + replacenodenames[num][j]);
+                            rAttachnodes.Add(part.findAttachNode(replacenodenames[num][j]));
                         }
 
                         if ((rTransforms.Count > 0) && (rAttachnodes.Count > 0))
@@ -250,48 +252,53 @@ namespace PlanetarySurfaceStructures
             bool attachmentChanged = false;
 
             //check all the corridors for changes
-            foreach (CorridorPart p in corridors)
+            //foreach (CorridorPart p in corridors)
+            for (int i = 0; i < corridors.Count; i++)
             {
                 //when the attachment situation has changed
-                bool attached = (p.node.attachedPart != null);
+                bool attached = (corridors[i].node.attachedPart != null);
 
                 noAttachment = noAttachment && !attached;
 
-                if (p.isSurfaceAttachPoint)
+                if (corridors[i].isSurfaceAttachPoint)
                 {
                     attached |= (part.srfAttachNode.attachedPart != null);
                     noAttachment = noAttachment && (part.srfAttachNode.attachedPart == null);
                 }
 
-                if (attached != p.lastAttached)
+                if (attached != corridors[i].lastAttached)
                 {
                     attachmentChanged = true;
 
-                    foreach (Transform t in p.transforms)
+                    //foreach (Transform t in p.transforms)
+                    for (int j = 0; j < corridors[i].transforms.Count; j++)
                     {
-                        t.gameObject.SetActive(attached);
+                        corridors[i].transforms[j].gameObject.SetActive(attached);
                     }
-                    p.lastAttached = attached;
+                    corridors[i].lastAttached = attached;
                 }
             }
 
             if (attachmentChanged)
             {
 
-                foreach (ReplacedPart rp in replaceParts)
+                //foreach (ReplacedPart rp in replaceParts)
+                for (int i = 0; i < replaceParts.Count; i++)
                 {
                     bool attached = false;
 
                     //check all nodes for attachments
-                    foreach (AttachNode an in rp.nodes)
+                    //foreach (AttachNode an in replaceParts[i].nodes)
+                    for (int j = 0; j < replaceParts[i].nodes.Count; j++)
                     {
-                        attached = attached | (an.attachedPart != null);
+                        attached = attached | (replaceParts[i].nodes[j].attachedPart != null);
                     }
 
                     //apply state to all transforms
-                    foreach (Transform tf in rp.transforms)
+                    //foreach (Transform tf in rp.transforms)
+                    for (int j = 0; j < replaceParts[i].transforms.Count; j++)
                     {
-                        tf.gameObject.SetActive(!attached);
+                        replaceParts[i].transforms[j].gameObject.SetActive(!attached);
                     }
                 }
             }
@@ -300,21 +307,25 @@ namespace PlanetarySurfaceStructures
             if ((showAllWithNoAttachment) && (noAttachment))
             {
                 //show all the attach parts
-                foreach (CorridorPart p in corridors)
+                //foreach (CorridorPart p in corridors)
+                for (int i = 0; i < corridors.Count; i++)
                 {
-                    foreach (Transform t in p.transforms)
+                    //foreach (Transform t in p.transforms)
+                    for (int j = 0; j < corridors[i].transforms.Count; j++)
                     {
-                        t.gameObject.SetActive(true);             
+                        corridors[i].transforms[j].gameObject.SetActive(true);             
                     }
-                    p.lastAttached = true;
+                    corridors[i].lastAttached = true;
                 }
 
                 //hide all the replace parts
-                foreach (ReplacedPart p in replaceParts)
+                //foreach (ReplacedPart p in replaceParts)
+                for (int i = 0; i < replaceParts.Count; i++)
                 {
-                    foreach (Transform t in p.transforms)
+                    //foreach (Transform t in p.transforms)
+                    for (int j = 0; j < replaceParts[i].transforms.Count; j++)
                     {
-                        t.gameObject.SetActive(false);
+                        replaceParts[i].transforms[j].gameObject.SetActive(false);
                     }
                 }
             }
