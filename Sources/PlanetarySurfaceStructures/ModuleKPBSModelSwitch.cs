@@ -37,9 +37,9 @@ namespace PlanetarySurfaceStructures
             //----------------------------------------------------------
             //create the list of transforms to be made switchable
             //----------------------------------------------------------
-            int i = 0;
+            //int i = 0;
             //foreach (string transformName in transformGroupNames)
-            for (int k = 0; i < transformGroupNames.Length; i++)
+            for (int k = 0; k < transformGroupNames.Length; k++)
             {
                 name = transformGroupNames[k].Trim();
 
@@ -52,13 +52,13 @@ namespace PlanetarySurfaceStructures
 
                 models.Add(mt);
                 if (transformGroupVisibleNames.Length == transformGroupNames.Length) {
-                    visibleNames.Add(transformGroupVisibleNames[i]);
+                    visibleNames.Add(transformGroupVisibleNames[k]);
                 }
                 else
                 {
-                    visibleNames.Add(transformGroupNames[i]);
+                    visibleNames.Add(transformGroupNames[k]);
                 }
-                i++;
+                //i++;
             }
 
             if (models.Count < 2)
