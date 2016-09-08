@@ -37,10 +37,11 @@ namespace PlanetarySurfaceStructures
             //----------------------------------------------------------
             //create the list of transforms to be made switchable
             //----------------------------------------------------------
-            int i = 0;
-            foreach (string transformName in transformGroupNames)
+            //int i = 0;
+            //foreach (string transformName in transformGroupNames)
+            for (int k = 0; k < transformGroupNames.Length; k++)
             {
-                name = transformName.Trim();
+                name = transformGroupNames[k].Trim();
 
                 List<Transform> transforms = new List<Transform>();
                 transforms.AddRange(part.FindModelTransforms(name));
@@ -51,13 +52,13 @@ namespace PlanetarySurfaceStructures
 
                 models.Add(mt);
                 if (transformGroupVisibleNames.Length == transformGroupNames.Length) {
-                    visibleNames.Add(transformGroupVisibleNames[i]);
+                    visibleNames.Add(transformGroupVisibleNames[k]);
                 }
                 else
                 {
-                    visibleNames.Add(transformGroupNames[i]);
+                    visibleNames.Add(transformGroupNames[k]);
                 }
-                i++;
+                //i++;
             }
 
             if (models.Count < 2)
@@ -176,15 +177,16 @@ namespace PlanetarySurfaceStructures
         {
             for (int i = 0; i < models.Count; i++)
             {
-                foreach (Transform tr in models[i].transforms)
+                //foreach (Transform tr in models[i].transforms)
+                for (int j = 0; j < models[i].transforms.Count; j++)
                 {
                     if (i == numModel)
                     {
-                        tr.gameObject.SetActive(true);
+                        models[i].transforms[j].gameObject.SetActive(true);
                     }
                     else
                     {
-                        tr.gameObject.SetActive(false);
+                        models[i].transforms[j].gameObject.SetActive(false);
                     }
                 }
             }

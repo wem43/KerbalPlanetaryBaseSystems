@@ -103,35 +103,34 @@ namespace PlanetarySurfaceStructures
             newRecipe.TakeAmount = 1;// (float)rate;
 
             //add the inputs to the recipe
-            foreach (ResourceRatio res in inputList)
+            for (int i = 0; i < inputList.Count; i++)
             {
                 ResourceRatio newRes = new ResourceRatio();
-                newRes.ResourceName = res.ResourceName;
-                newRes.FlowMode = res.FlowMode;
-                newRes.Ratio = res.Ratio * rate;
-                newRes.DumpExcess = res.DumpExcess;
+                newRes.ResourceName = inputList[i].ResourceName;
+                newRes.FlowMode = inputList[i].FlowMode;
+                newRes.Ratio = inputList[i].Ratio * rate;
+                newRes.DumpExcess = inputList[i].DumpExcess;
                 newRecipe.Inputs.Add(newRes);
             }
             //add the outputs to the recipe
-            foreach (ResourceRatio res in outputList)
+            for (int i = 0; i < outputList.Count; i++)
             {
                 ResourceRatio newRes = new ResourceRatio();
-                newRes.ResourceName = res.ResourceName;
-                newRes.FlowMode = res.FlowMode;
-                newRes.DumpExcess = res.DumpExcess;
-                newRes.Ratio = res.Ratio * rate;
+                newRes.ResourceName = outputList[i].ResourceName;
+                newRes.FlowMode = outputList[i].FlowMode;
+                newRes.Ratio = outputList[i].Ratio * rate;
+                newRes.DumpExcess = outputList[i].DumpExcess;
                 newRecipe.Outputs.Add(newRes);
             }
-
             //only add the fertilizer as a requirement when it is used
-            foreach (ResourceRatio res in reqList)
+            for (int i = 0; i < reqList.Count; i++)
             {
                 ResourceRatio newRes = new ResourceRatio();
-                newRes.ResourceName = res.ResourceName;
-                newRes.FlowMode = res.FlowMode;
-                newRes.DumpExcess = res.DumpExcess;
-                newRes.Ratio = res.Ratio * rate;
-                newRecipe.Outputs.Add(newRes);
+                newRes.ResourceName = reqList[i].ResourceName;
+                newRes.FlowMode = reqList[i].FlowMode;
+                newRes.Ratio = reqList[i].Ratio * rate;
+                newRes.DumpExcess = outputList[i].DumpExcess;
+                newRecipe.Requirements.Add(newRes);
             }
             return newRecipe;
         }

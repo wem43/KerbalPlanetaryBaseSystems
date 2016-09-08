@@ -330,9 +330,10 @@ namespace PlanetarySurfaceStructures
 
                 //iterate over all categories and remove them from the list
                 //set all the categories to none to prevent this part to be added
-                foreach (AvailablePart part in parts)
+                //foreach (AvailablePart part in parts)
+                for (int i = 0; i < parts.Count; i++)
                 {
-                    part.category = PartCategories.none;
+                    parts[i].category = PartCategories.none;
                 }
             }
 
@@ -363,16 +364,18 @@ namespace PlanetarySurfaceStructures
                     KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Life Support", filterIconLifeSupport, p => filter_KKAOSS_LS(p));
 
                     //set all the categories to none to prevent this part to be added
-                    foreach (AvailablePart part in LS_parts)
+                    //foreach (AvailablePart part in LS_parts)
+                    for (int i = 0; i < LS_parts.Count; i++)
                     {
-                        part.category = PartCategories.none;
+                        LS_parts[i].category = PartCategories.none;
                     }
 
                     //add the greenhouse the the LS mods when other ls mods were found
                     List<AvailablePart> greenhouses = PartLoader.Instance.parts.FindAll(ap => ap.name.Equals("KKAOSS.Greenhouse.g"));
-                    foreach (AvailablePart part in greenhouses)
+                    //foreach (AvailablePart part in greenhouses)
+                    for (int i = 0; i < greenhouses.Count; i++)
                     {
-                        part.category = PartCategories.none;
+                        greenhouses[i].category = PartCategories.none;
                     }
 
                     //Force the icon to show (>_<)
