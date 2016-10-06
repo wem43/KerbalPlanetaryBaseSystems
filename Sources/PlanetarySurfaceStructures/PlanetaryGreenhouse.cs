@@ -325,6 +325,7 @@ namespace PlanetarySurfaceStructures
 
             //init the resources
             initResources();
+            updateRateGUI();
 
             if (!fertilizerFound)
             {

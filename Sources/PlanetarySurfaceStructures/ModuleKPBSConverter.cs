@@ -50,6 +50,8 @@ namespace PlanetarySurfaceStructures
         {
             base.OnStart(state);
 
+            updateRateGUI();
+
             Events["changeRate"].guiName = changeRateString;
             Fields["guiProductionRate"].guiName = converterRateName;
         }

@@ -111,7 +111,7 @@ namespace PlanetarySurfaceStructures
             for (int i = 0; i < nodenames.Length; i++)
             {
                 Debug.Log("[KPBS] DD 1");
-                AttachNode node = part.findAttachNode(nodenames[i]);
+                AttachNode node = part.FindAttachNode(nodenames[i]);
                 List<Transform> transforms = new List<Transform>();
                 for (int k = 0; k < transformnames[num].Length; k++) {
                     Debug.Log("[KPBS] DD 2");
@@ -194,7 +194,7 @@ namespace PlanetarySurfaceStructures
                         for (int j = 0; j < replacenodenames[num].Length; j++)
                         {
                             Debug.Log("[KPBS] Replace Node Name: " + replacenodenames[num][j]);
-                            rAttachnodes.Add(part.findAttachNode(replacenodenames[num][j]));
+                            rAttachnodes.Add(part.FindAttachNode(replacenodenames[num][j]));
                         }
 
                         if ((rTransforms.Count > 0) && (rAttachnodes.Count > 0))
