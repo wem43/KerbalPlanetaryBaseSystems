@@ -1,9 +1,12 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 namespace PlanetarySurfaceStructures
 {
+
+    /**
+     * This class is used for corridor nodes which change their appearance according to where another part was attached to them.
+     **/
     class ModuleKPBSCorridorNodes : PartModule
     {
         //the names of the nodes
@@ -40,16 +43,19 @@ namespace PlanetarySurfaceStructures
         //the list of transforms to replace
         List<ReplacedPart> replaceParts = new List<ReplacedPart>();
 
+        //saves wheter the corridor needs an update
         bool needsUpdate = false;
 
+        //saves if this module has already registere for the onEditorShipModified event
         bool editorChangeRegistered = false;
+
+        //saves if this module has already registere for the onVesselWasModified event
         bool flightChangeRegistered = false;
 
         //the part that is enabled and disabled
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
-            Debug.Log("[KPBS] Corridor OnStart");
 
             if (HighLogic.LoadedSceneIsEditor)
             {
@@ -178,19 +184,17 @@ namespace PlanetarySurfaceStructures
 
                     //for all transform groups
                     num = 0;
-                    //foreach (string[] tNames in replacetransformnames)
                     for (int i = 0; i < replacetransformnames.Count; i++)
                     {
                         List<Transform> rTransforms = new List<Transform>();
                         List<AttachNode> rAttachnodes = new List<AttachNode>();
 
-                        //foreach (string tName in replacetransformnames[i])
                         for (int j = 0; j < replacetransformnames[i].Length; j++)
                         {
                             Debug.Log("[KPBS] Replace Tranform Name: " + replacetransformnames[i][j]);
                             rTransforms.AddRange(part.FindModelTransforms(replacetransformnames[i][j]));
                         }
-                        //foreach (string nName in replacenodenames[num])
+
                         for (int j = 0; j < replacenodenames[num].Length; j++)
                         {
                             Debug.Log("[KPBS] Replace Node Name: " + replacenodenames[num][j]);
@@ -212,6 +216,7 @@ namespace PlanetarySurfaceStructures
             updateAllCorridors();
         }
 
+        //clear all the data and the listener for GameEvents
         private void OnDestroy()
         {
             if (flightChangeRegistered)
@@ -226,16 +231,19 @@ namespace PlanetarySurfaceStructures
             }
         }
 
+        //save that the nodes need an update because the vessel was modified
         private void vesselModified(Vessel data)
         {
             needsUpdate = true;
         }
 
+        //save that the nodes need an update because the ship was modified
         private void shipModified(ShipConstruct data)
         {
             needsUpdate = true;
         }
 
+        //update the status of the corridor when needed
         public void Update()
         {
             if (needsUpdate)
@@ -252,7 +260,6 @@ namespace PlanetarySurfaceStructures
             bool attachmentChanged = false;
 
             //check all the corridors for changes
-            //foreach (CorridorPart p in corridors)
             for (int i = 0; i < corridors.Count; i++)
             {
                 //when the attachment situation has changed
@@ -270,7 +277,7 @@ namespace PlanetarySurfaceStructures
                 {
                     attachmentChanged = true;
 
-                    //foreach (Transform t in p.transforms)
+                    //iterate ovetr all transforms of the corridor and activate them
                     for (int j = 0; j < corridors[i].transforms.Count; j++)
                     {
                         corridors[i].transforms[j].gameObject.SetActive(attached);
@@ -281,21 +288,17 @@ namespace PlanetarySurfaceStructures
 
             if (attachmentChanged)
             {
-
-                //foreach (ReplacedPart rp in replaceParts)
                 for (int i = 0; i < replaceParts.Count; i++)
                 {
                     bool attached = false;
 
                     //check all nodes for attachments
-                    //foreach (AttachNode an in replaceParts[i].nodes)
                     for (int j = 0; j < replaceParts[i].nodes.Count; j++)
                     {
                         attached = attached | (replaceParts[i].nodes[j].attachedPart != null);
                     }
 
                     //apply state to all transforms
-                    //foreach (Transform tf in rp.transforms)
                     for (int j = 0; j < replaceParts[i].transforms.Count; j++)
                     {
                         replaceParts[i].transforms[j].gameObject.SetActive(!attached);
@@ -307,10 +310,8 @@ namespace PlanetarySurfaceStructures
             if ((showAllWithNoAttachment) && (noAttachment))
             {
                 //show all the attach parts
-                //foreach (CorridorPart p in corridors)
                 for (int i = 0; i < corridors.Count; i++)
                 {
-                    //foreach (Transform t in p.transforms)
                     for (int j = 0; j < corridors[i].transforms.Count; j++)
                     {
                         corridors[i].transforms[j].gameObject.SetActive(true);             
@@ -319,10 +320,8 @@ namespace PlanetarySurfaceStructures
                 }
 
                 //hide all the replace parts
-                //foreach (ReplacedPart p in replaceParts)
                 for (int i = 0; i < replaceParts.Count; i++)
                 {
-                    //foreach (Transform t in p.transforms)
                     for (int j = 0; j < replaceParts[i].transforms.Count; j++)
                     {
                         replaceParts[i].transforms[j].gameObject.SetActive(false);
@@ -331,9 +330,7 @@ namespace PlanetarySurfaceStructures
             }
         }
 
-        /**
-         * An internal struct that holds the data for the switchable parts
-         */
+        // An internal struct that holds the data for the switchable parts
         private class CorridorPart
         {
             public AttachNode node;
@@ -342,9 +339,7 @@ namespace PlanetarySurfaceStructures
             public bool isSurfaceAttachPoint;
         }
 
-        /**
-         * An internal struct that holds the data for parts that are replaced
-         */
+        // An internal struct that holds the data for parts that are replaced
         private class ReplacedPart
         {
             public List<AttachNode> nodes;

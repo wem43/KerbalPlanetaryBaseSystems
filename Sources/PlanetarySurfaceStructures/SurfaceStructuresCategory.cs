@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace PlanetarySurfaceStructures
@@ -17,6 +16,19 @@ namespace PlanetarySurfaceStructures
         private Texture2D icon_k_and_k = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         private Texture2D icon_k_lifesupport = new Texture2D(32, 32, TextureFormat.ARGB32, false);
         private Texture2D icon_category_ls = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+
+        private Texture2D icon_filter_pods = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_engine = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_fuel = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_payload = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_construction = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_coupling = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_electrical = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_ground = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_utility = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_science = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+        private Texture2D icon_filter_thermal = new Texture2D(32, 32, TextureFormat.ARGB32, false);
+
 
         internal string iconName = "PlanetaryBaseSystemsEditor";
         internal bool filter = true;
@@ -56,6 +68,61 @@ namespace PlanetarySurfaceStructures
                     Debug.Log("[KPBS] ERROR loading KPBSCategoryLifeSupport");
                     isValid = false;
                 }
+                if (!icon_filter_pods.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_pods.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_pods");
+                    isValid = false;
+                }
+                if (!icon_filter_fuel.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_fueltank.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_fueltank");
+                    isValid = false;
+                }
+                if (!icon_filter_electrical.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_electrical.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_electrical");
+                    isValid = false;
+                }
+                if (!icon_filter_thermal.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_thermal.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_thermal");
+                    isValid = false;
+                }
+                if (!icon_filter_science.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_science.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_science");
+                    isValid = false;
+                }
+                if (!icon_filter_engine.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_engine.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_engine");
+                    isValid = false;
+                }
+                if (!icon_filter_ground.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_ground.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_ground");
+                    isValid = false;
+                }
+                if (!icon_filter_coupling.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_coupling.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_coupling");
+                    isValid = false;
+                }
+                if (!icon_filter_payload.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_payload.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_payload");
+                    isValid = false;
+                }
+                if (!icon_filter_construction.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_construction.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_construction");
+                    isValid = false;
+                }
+                if (!icon_filter_utility.LoadImage(File.ReadAllBytes("GameData/PlanetaryBaseInc/BaseSystem/Icons/filter_utility.png")))
+                {
+                    Debug.Log("[KPBS] ERROR loading filter_utility");
+                    isValid = false;
+                }
             }
             catch (Exception e)
             {
@@ -75,14 +142,7 @@ namespace PlanetarySurfaceStructures
          */
         private bool filter_KKAOSS(AvailablePart part)
         {
-            if (part != null)
-            {
-                return part.name.StartsWith("KKAOSS");
-            }
-            else
-            {
-                return false;
-            }
+            return (part != null && part.name.StartsWith("KKAOSS"));
         }
 
         /**
@@ -146,12 +206,7 @@ namespace PlanetarySurfaceStructures
         private bool filterProfiles(AvailablePart part)
         {
             //return false when no category given
-            if (part.bulkheadProfiles == null)
-            {
-                return false;
-            }
-
-            return part.bulkheadProfiles.Contains("PlanetaryBase");
+            return (part.bulkheadProfiles != null && part.bulkheadProfiles.Contains("PlanetaryBase"));
         }
 
 
@@ -215,7 +270,7 @@ namespace PlanetarySurfaceStructures
 
             //-----------------own category-----------------
 
-            if ((KPBSConfiguration.Instance().ShowModFilter) && (!KPBSConfiguration.Instance().ShowSeparateFunctionCategory))
+            if (KPBSConfiguration.Instance().ShowModFilter)
             {
                 Debug.Log("[KPBS] category");
 
@@ -223,57 +278,20 @@ namespace PlanetarySurfaceStructures
                 RUI.Icons.Selectable.Icon filterIconSurfaceStructures = new RUI.Icons.Selectable.Icon("KKAOSS_icon_KPSS", icon_surface_structures, icon_surface_structures, true);
 
                 //icons for KPSS's own category
-                RUI.Icons.Selectable.Icon ic_pods = KSP.UI.Screens.PartCategorizer.Instance.iconLoader.GetIcon("RDicon_commandmodules");
-                RUI.Icons.Selectable.Icon ic_fuels = KSP.UI.Screens.PartCategorizer.Instance.iconLoader.GetIcon("RDicon_fuelSystems-advanced");
-                RUI.Icons.Selectable.Icon ic_engine = KSP.UI.Screens.PartCategorizer.Instance.iconLoader.GetIcon("R&D_node_icon_generalrocketry");
-                RUI.Icons.Selectable.Icon ic_structural = KSP.UI.Screens.PartCategorizer.Instance.iconLoader.GetIcon("R&D_node_icon_generalconstruction");
-                RUI.Icons.Selectable.Icon ic_aero = KSP.UI.Screens.PartCategorizer.Instance.iconLoader.GetIcon("R&D_node_icon_stability");
-                RUI.Icons.Selectable.Icon ic_utility = KSP.UI.Screens.PartCategorizer.Instance.iconLoader.GetIcon("R&D_node_icon_generic");
-                RUI.Icons.Selectable.Icon ic_science = KSP.UI.Screens.PartCategorizer.Instance.iconLoader.GetIcon("R&D_node_icon_advsciencetech");
+                RUI.Icons.Selectable.Icon ic_pods = new RUI.Icons.Selectable.Icon("KKAOSS_filter_pods", icon_filter_pods, icon_filter_pods, true);
+                RUI.Icons.Selectable.Icon ic_fuels = new RUI.Icons.Selectable.Icon("KKAOSS_filter_fuel", icon_filter_fuel, icon_filter_fuel, true);
+                RUI.Icons.Selectable.Icon ic_engine = new RUI.Icons.Selectable.Icon("KKAOSS_filter_fuel", icon_filter_engine, icon_filter_engine, true);
+                RUI.Icons.Selectable.Icon ic_structural = new RUI.Icons.Selectable.Icon("KKAOSS_filter_fuel", icon_filter_construction, icon_filter_construction, true);
+                RUI.Icons.Selectable.Icon ic_payload = new RUI.Icons.Selectable.Icon("KKAOSS_filter_fuel", icon_filter_payload, icon_filter_payload, true);
+                RUI.Icons.Selectable.Icon ic_utility = new RUI.Icons.Selectable.Icon("KKAOSS_filter_fuel", icon_filter_utility, icon_filter_utility, true);
+                RUI.Icons.Selectable.Icon ic_coupling = new RUI.Icons.Selectable.Icon("KKAOSS_filter_coupling", icon_filter_coupling, icon_filter_coupling, true);
+                RUI.Icons.Selectable.Icon ic_ground = new RUI.Icons.Selectable.Icon("KKAOSS_filter_ground", icon_filter_ground, icon_filter_ground, true);
+                RUI.Icons.Selectable.Icon ic_thermal = new RUI.Icons.Selectable.Icon("KKAOSS_filter_thermal", icon_filter_thermal, icon_filter_thermal, true);
+                RUI.Icons.Selectable.Icon ic_electrical = new RUI.Icons.Selectable.Icon("KKAOSS_filter_electrical", icon_filter_electrical, icon_filter_electrical, true);
+                RUI.Icons.Selectable.Icon ic_science = new RUI.Icons.Selectable.Icon("KKAOSS_filter_fuel", icon_filter_science, icon_filter_science, true);
                 RUI.Icons.Selectable.Icon ic_lifeSupport = new RUI.Icons.Selectable.Icon("KKAOSS_icon_KPSS", icon_category_ls, icon_category_ls, true);
 
-                if (ic_pods == null)
-                {
-                    Debug.Log("[KPBS] ERROR ic_pods cannot be loaded");
-                    return;
-                }
-                if (ic_fuels == null)
-                {
-                    Debug.Log("[KPBS] ERROR ic_fuels cannot be loaded");
-                    return;
-                }
-                if (ic_engine == null)
-                {
-                    Debug.Log("[KPBS] ERROR ic_engine cannot be loaded");
-                    return;
-                }
-                if (ic_structural == null)
-                {
-                    Debug.Log("[KPBS] ERROR ic_structural cannot be loaded");
-                    return;
-                }
-                if (ic_aero == null)
-                {
-                    Debug.Log("[KPBS] ERROR ic_aero cannot be loaded");
-                    return;
-                }
-                if (ic_utility == null)
-                {
-                    Debug.Log("[KPBS] ERROR ic_utility cannot be loaded");
-                    return;
-                }
-                if (ic_science == null)
-                {
-                    Debug.Log("[KPBS] ERROR ic_science cannot be loaded");
-                    return;
-                }
-                if (ic_lifeSupport == null)
-                {
-                    Debug.Log("[KPBS] ERROR ic_lifeSupport cannot be loaded");
-                    return;
-                }
-
-                //add KPSS to the categories
+                //add KPBS to the categories
                 KSP.UI.Screens.PartCategorizer.Category surfaceStructureFilter = KSP.UI.Screens.PartCategorizer.AddCustomFilter("Planetary Surface Structures", filterIconSurfaceStructures, new Color(0.63f, 0.85f, 0.63f));
 
                 //add subcategories to the KPSS category you just added
@@ -281,7 +299,11 @@ namespace PlanetarySurfaceStructures
                 KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Fuel Tank", ic_fuels, p => filterCategories(p, PartCategories.FuelTank));
                 KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Engines", ic_engine, p => filterCategories(p, PartCategories.Propulsion));
                 KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Structural", ic_structural, p => filterCategories(p, PartCategories.Structural));
-                KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Aerodynamics", ic_aero, p => filterCategories(p, PartCategories.Aero));
+                KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Coupling", ic_coupling, p => filterCategories(p, PartCategories.Coupling));
+                KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Payload", ic_payload, p => filterCategories(p, PartCategories.Payload));
+                KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Ground", ic_ground, p => filterCategories(p, PartCategories.Ground));
+                KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Thermal", ic_thermal, p => filterCategories(p, PartCategories.Thermal));
+                KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Electrical", ic_electrical, p => filterCategories(p, PartCategories.Electrical));
                 KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Science", ic_science, p => filterCategories(p, PartCategories.Science));
 
                 if (LS_parts.Count > 0)
@@ -298,7 +320,6 @@ namespace PlanetarySurfaceStructures
             //-----------------end own category-----------------
 
             //------------subcategory in function filter---------
-
             if (KPBSConfiguration.Instance().ShowSeparateFunctionCategory)
             {
                 Debug.Log("[KPBS] subcategory");
@@ -320,36 +341,18 @@ namespace PlanetarySurfaceStructures
                     KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Planetary Surface Structures", filterIconSurfaceStructures, p => filter_KKAOSS_NO_LS(p));
                 else
                     KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Planetary Surface Structures", filterIconSurfaceStructures, p => filter_KKAOSS(p));
-
-                //Force the icon to show (>_<)
-                //RUIToggleButtonTyped button = functionFilter.button.activeButton;
-                //button.SetFalse(button, RUIToggleButtonTyped.ClickType.FORCED);
-                //button.SetTrue(button, RUIToggleButtonTyped.ClickType.FORCED);
-
-                List<AvailablePart> parts = PartLoader.Instance.parts.FindAll(ap => ap.name.StartsWith("KKAOSS"));
-
-                //iterate over all categories and remove them from the list
-                //set all the categories to none to prevent this part to be added
-                //foreach (AvailablePart part in parts)
-                for (int i = 0; i < parts.Count; i++)
-                {
-                    parts[i].category = PartCategories.none;
-                }
             }
-
             //---------end subcategory in function filter-------
 
             //------------subcategory for life support---------
-
-            //when life support should be separated
             if (KPBSConfiguration.Instance().SeparateLifeSupport)
             {
                 Debug.Log("[KPBS] life support");
 
-                Debug.Log("[KPBS] Life Support Modules found: " + LS_parts.Count());
+                Debug.Log("[KPBS] Life Support Modules found: " + LS_parts.Count);
 
                 //only continue when there are parts for life support
-                if (LS_parts.Count() > 0)
+                if (LS_parts.Count > 0)
                 {
                     RUI.Icons.Selectable.Icon filterIconLifeSupport = new RUI.Icons.Selectable.Icon("KKAOSS_icon_KPSS", icon_category_ls, icon_category_ls, true);
 
@@ -364,7 +367,6 @@ namespace PlanetarySurfaceStructures
                     KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Life Support", filterIconLifeSupport, p => filter_KKAOSS_LS(p));
 
                     //set all the categories to none to prevent this part to be added
-                    //foreach (AvailablePart part in LS_parts)
                     for (int i = 0; i < LS_parts.Count; i++)
                     {
                         LS_parts[i].category = PartCategories.none;
@@ -372,19 +374,12 @@ namespace PlanetarySurfaceStructures
 
                     //add the greenhouse the the LS mods when other ls mods were found
                     List<AvailablePart> greenhouses = PartLoader.Instance.parts.FindAll(ap => ap.name.Equals("KKAOSS.Greenhouse.g"));
-                    //foreach (AvailablePart part in greenhouses)
                     for (int i = 0; i < greenhouses.Count; i++)
                     {
                         greenhouses[i].category = PartCategories.none;
                     }
-
-                    //Force the icon to show (>_<)
-                    //RUIToggleButtonTyped button = functionFilter.button.activeButton;
-                    //button.SetFalse(button, RUIToggleButtonTyped.ClickType.FORCED);
-                    //button.SetTrue(button, RUIToggleButtonTyped.ClickType.FORCED);
                 }
             }
-
             //---------end subcategory for life support-------
         }
     }

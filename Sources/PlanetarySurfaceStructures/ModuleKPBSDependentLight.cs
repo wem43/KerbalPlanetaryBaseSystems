@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PlanetarySurfaceStructures
 {
@@ -82,7 +81,6 @@ namespace PlanetarySurfaceStructures
         public void toggleAnimation()
         {
             //variable for other modules to show the module is animating 
-            //isAnimating = true;
             if (anim != null)
             {
 
@@ -124,9 +122,9 @@ namespace PlanetarySurfaceStructures
         public override void OnStart(PartModule.StartState state)
         {
             base.OnStart(state);
-            
+
             //find the animation
-            anim = part.FindModelAnimators(animationName).FirstOrDefault();
+            anim = part.FindModelAnimators(animationName)[0];
 
             //find the dependent module 
             dependent = (PlanetaryModule)this.part.GetComponent("PlanetaryModule");

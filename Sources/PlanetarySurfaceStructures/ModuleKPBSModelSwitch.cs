@@ -37,8 +37,6 @@ namespace PlanetarySurfaceStructures
             //----------------------------------------------------------
             //create the list of transforms to be made switchable
             //----------------------------------------------------------
-            //int i = 0;
-            //foreach (string transformName in transformGroupNames)
             for (int k = 0; k < transformGroupNames.Length; k++)
             {
                 name = transformGroupNames[k].Trim();
@@ -58,15 +56,16 @@ namespace PlanetarySurfaceStructures
                 {
                     visibleNames.Add(transformGroupNames[k]);
                 }
-                //i++;
             }
 
+            //when there is only one model, we do not need to show the controls
             if (models.Count < 2)
             {
                 Events["toggleModel"].active = false;
                 Events["toggleModelNext"].active = false;
                 Events["toggleModelPrev"].active = false;
             }
+            //when there are two models make the controls appear as a switch between two parts
             else if (models.Count == 2)
             {
                 Events["toggleModel"].active = true;
@@ -74,6 +73,7 @@ namespace PlanetarySurfaceStructures
                 Events["toggleModelNext"].active = false;
                 Events["toggleModelPrev"].active = false;
             }
+            //when there are more than two models, let the user iterate over them
             else if (models.Count > 2)
             {
                 Events["toggleModel"].active = false;
@@ -151,6 +151,8 @@ namespace PlanetarySurfaceStructures
             updateActiveModel();
         }
 
+
+        // Get the name of the visible part
         private string getName(int index)
         {
             if ((visibleNames.Count > 0) && (visibleNames.Count == models.Count))
@@ -170,14 +172,11 @@ namespace PlanetarySurfaceStructures
         }
 
 
-        /**
-         * Update which model are active or inactive
-         */
+        // Update which model are active or inactive
         private void updateActiveModel()
         {
             for (int i = 0; i < models.Count; i++)
             {
-                //foreach (Transform tr in models[i].transforms)
                 for (int j = 0; j < models[i].transforms.Count; j++)
                 {
                     if (i == numModel)
@@ -192,11 +191,7 @@ namespace PlanetarySurfaceStructures
             }
         }
 
-
-
-        /**
-         * An internal struct that holds the data for the switchable parts
-         */
+        // An internal struct that holds the data for the switchable parts
         private class ModelTransforms
         {
             public List<Transform> transforms;
