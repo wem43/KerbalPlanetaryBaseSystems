@@ -331,10 +331,7 @@ namespace PlanetarySurfaceStructures
                 KSP.UI.Screens.PartCategorizer.Category functionFilter = KSP.UI.Screens.PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Function");
 
                 //Add a new subcategory to the function filter
-                if ((KPBSConfiguration.Instance().SeparateLifeSupport) && (LS_parts.Count > 0))
-                    KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Planetary Surface Structures", filterIconSurfaceStructures, p => filter_KKAOSS_NO_LS(p));
-                else
-                    KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Planetary Surface Structures", filterIconSurfaceStructures, p => filter_KKAOSS(p));
+                KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Planetary Surface Structures", filterIconSurfaceStructures, p => filter_KKAOSS(p));
 
                 //Remove the parts from all other categories
                 List<AvailablePart> parts = PartLoader.Instance.loadedParts.FindAll(ap => ap.name.StartsWith("KKAOSS"));
@@ -346,7 +343,21 @@ namespace PlanetarySurfaceStructures
             //---------end subcategory in function filter-------
 
             //------------subcategory for life support---------
-            if (KPBSConfiguration.Instance().SeparateLifeSupport)
+
+            //search for CCK
+            int numAssemblies = AssemblyLoader.loadedAssemblies.Count;
+            bool CCKavailable = false;
+            for (int i = 0; i < numAssemblies; i++)
+            {
+                if (AssemblyLoader.loadedAssemblies[i].name.Equals("CCK"))
+                {
+                    CCKavailable = true;
+                    break;
+                }
+            }
+
+            //when the community category kit is not available, add own category for life support
+            if (!CCKavailable) //(  KPBSConfiguration.Instance().SeparateLifeSupport)
             {
                 Debug.Log("[KPBS] Life Support Modules found: " + LS_parts.Count);
 
@@ -366,10 +377,10 @@ namespace PlanetarySurfaceStructures
                     KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "KPBS Life Support", filterIconLifeSupport, p => filter_KKAOSS_LS(p));
 
                     //set all the categories to none to prevent this part to be added
-                    for (int i = 0; i < LS_parts.Count; i++)
-                    {
-                        LS_parts[i].category = PartCategories.none;
-                    }
+                    //for (int i = 0; i < LS_parts.Count; i++)
+                    //{
+                    //    LS_parts[i].category = PartCategories.none;
+                    //}
 
                     //add the greenhouse the the LS mods when other ls mods were found
                     List<AvailablePart> greenhouses = PartLoader.Instance.loadedParts.FindAll(ap => ap.name.Equals("KKAOSS.Greenhouse.g"));
@@ -377,6 +388,14 @@ namespace PlanetarySurfaceStructures
                     {
                         greenhouses[i].category = PartCategories.none;
                     }
+                }
+            }
+            else if (LS_parts.Count > 0)
+            {
+                List<AvailablePart> greenhouses = PartLoader.Instance.loadedParts.FindAll(ap => ap.name.Equals("KKAOSS.Greenhouse.g"));
+                for (int i = 0; i < greenhouses.Count; i++)
+                {
+                    greenhouses[i].category = PartCategories.none;
                 }
             }
             //---------end subcategory for life support-------

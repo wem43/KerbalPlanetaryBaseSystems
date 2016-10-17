@@ -24,9 +24,6 @@ namespace PlanetarySurfaceStructures
         //saves whether the mod shoud add a filter for all its parts
         private bool showModFilter = false;
 
-        //saves whether the life support parts should be shown in a separate category
-        private bool separateLifeSupport = false;
-
         //saves wheter the parts of this mod have their own category
         private bool showSeparateFunctionCategory = false;
 
@@ -56,15 +53,6 @@ namespace PlanetarySurfaceStructures
             get { return showSeparateFunctionCategory; }
         }
 
-        /**
-          * Get if the mod should separate the life support parts
-          * @return true when it should be shown, else false
-         **/
-        public bool SeparateLifeSupport
-        {
-            get { return separateLifeSupport; }
-        }
-
         // The constructor for this class reading the settings
         private KPBSConfiguration()
         {
@@ -90,17 +78,13 @@ namespace PlanetarySurfaceStructures
             try
             {
                 showManufacturer = bool.Parse(node.GetValue("showManufacturers"));
-
-
                 showModFilter = bool.Parse(node.GetValue("showModCategory"));
                 showSeparateFunctionCategory = bool.Parse(node.GetValue("separateFunctionFilter"));
-                separateLifeSupport = bool.Parse(node.GetValue("separateLifeSupport"));
 
                 //Log the settings that are read from the config file
                 Debug.Log("[KPBS]showManufacturer: " + showManufacturer);
                 Debug.Log("[KPBS]showModFilter: " + showModFilter);
                 Debug.Log("[KPBS]showSeparateFunctionCategory: " + showSeparateFunctionCategory);
-                Debug.Log("[KPBS]separateLifeSupport: " + separateLifeSupport);
             }
             catch (ArgumentNullException exception)
             {

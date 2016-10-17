@@ -54,6 +54,7 @@
     <Compile Include="ModuleKPBSCorridorNodes.cs" />
     <Compile Include="ModuleKPBSConverter.cs" />
     <Compile Include="ModuleKPBSModelSwitch.cs" />
+    <Compile Include="ModuleKPBSTransparendPodHelper.cs" />
     <Compile Include="PlanetaryGreenhouse.cs" />
     <Compile Include="PlanetaryModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

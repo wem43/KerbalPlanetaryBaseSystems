@@ -71,9 +71,22 @@ namespace PlanetarySurfaceStructures
         //the name of the extended internal
         [KSPField]
         public string extendedInternalName = "extended";
-        
+
+        //the name of the additional internal
+        [KSPField]
+        public string additionalInternalName;
+
         //indicate that the packed internal is currently used
         private bool isInternalPacked = true;
+
+        //the transform for the extended part
+        Transform extendedInternalTransform;
+
+        //the transform for the packed part
+        Transform packedInternalTransform;
+
+        //the transform for an additional depthmask
+        private Transform additionalInternalTransform;
 
         //----------------internal data-----------------
 
@@ -91,8 +104,7 @@ namespace PlanetarySurfaceStructures
 		{
             if ((availableInVessel) && (!status.Equals("Deployed") || (this.part.protoModuleCrew.Count <= crewCapcityRetracted))) {
                 toggleAnimation();
-            }
-            
+            }            
         }
 
 		/**
@@ -183,6 +195,11 @@ namespace PlanetarySurfaceStructures
 
             //get the deploy animation
             deployAnim = part.FindModelAnimators(animationName)[0];
+
+            //find the transforms
+            extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
+            packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
+            additionalInternalTransform = part.internalModel.FindModelTransform(additionalInternalName);
 
             //Only initialize when an animation is available
             if (deployAnim != null) 
@@ -400,23 +417,63 @@ namespace PlanetarySurfaceStructures
             CheckIVAState();
         }
 
+
+        //find a camera by its name
+        private Camera findCamera(string cameranName)
+        {
+            int count = Camera.allCamerasCount;
+            for (int i = 0; i < count; ++i)
+            {
+                if (Camera.allCameras[i].name.Equals(cameranName))
+                {
+                    return Camera.allCameras[i];
+                }
+            }
+            return null;
+        }
+
         //switch to the internal with the given name
         private void CheckIVAState()
         {
             if (part.internalModel != null)
             {
-                Transform extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
-                Transform packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
+                //set the visibility of the additional internal model that is used for JSIAdvancedTransparendPods
+                if (additionalInternalTransform != null)
+                {
+                    if (!isInternalPacked) 
+                    {
+                        //when the stock IVA is active
+                        if ((findCamera("InternalSpaceOverlay Host") != null) && (additionalInternalTransform.gameObject.activeSelf))
+                        {
+                            additionalInternalTransform.gameObject.SetActive(false);
+                        }
+                        else if (!additionalInternalTransform.gameObject.activeSelf)
+                        {
+                            additionalInternalTransform.gameObject.SetActive(true);
+                        }
+                    }
+                    else if (additionalInternalTransform.gameObject.activeSelf)
+                    {
+                        additionalInternalTransform.gameObject.SetActive(false);
+                    }
+                }
 
+                //set the visibility of the extended internal model
                 if ((extendedInternalTransform != null) && (extendedInternalTransform.gameObject.activeSelf == isInternalPacked))
                 {
                     extendedInternalTransform.gameObject.SetActive(!isInternalPacked);
                 }
+                //Set the visibility of the packed internal model
                 if ((packedInternalTransform != null) && (packedInternalTransform.gameObject.activeSelf != isInternalPacked))
                 {
                     packedInternalTransform.gameObject.SetActive(isInternalPacked);
                 }
             }
+        }
+
+        public bool IsInternalExtended()
+        {
+            return !isInternalPacked;
         }
     }
 }
