@@ -72,9 +72,17 @@ namespace PlanetarySurfaceStructures
         [KSPField]
         public string extendedInternalName = "extended";
 
+        /** Varaible defining if the animation is available in EVA */
+        [KSPField]
+        public bool JSIATPSupportEnabled = false;
+
         //the name of the additional internal
         [KSPField]
-        public string additionalInternalName;
+        public string packedOverlayHiddenName = string.Empty;
+
+        //the name of the additional internal
+        [KSPField]
+        public string extendedOverlayHiddenName = string.Empty;
 
         //indicate that the packed internal is currently used
         private bool isInternalPacked = true;
@@ -86,7 +94,10 @@ namespace PlanetarySurfaceStructures
         Transform packedInternalTransform;
 
         //the transform for an additional depthmask
-        private Transform additionalInternalTransform;
+        private Transform packedOverlayHiddenTransform;
+
+        //the transform for an additional depthmask
+        private Transform extendedOverlayHiddenTransform;
 
         //----------------internal data-----------------
 
@@ -195,11 +206,6 @@ namespace PlanetarySurfaceStructures
 
             //get the deploy animation
             deployAnim = part.FindModelAnimators(animationName)[0];
-
-            //find the transforms
-            extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
-            packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
-            additionalInternalTransform = part.internalModel.FindModelTransform(additionalInternalName);
 
             //Only initialize when an animation is available
             if (deployAnim != null) 
@@ -419,17 +425,17 @@ namespace PlanetarySurfaceStructures
 
 
         //find a camera by its name
-        private Camera findCamera(string cameranName)
+        private bool isStockOverlayActive()
         {
             int count = Camera.allCamerasCount;
             for (int i = 0; i < count; ++i)
             {
-                if (Camera.allCameras[i].name.Equals(cameranName))
+                if (Camera.allCameras[i].name.Equals("InternalSpaceOverlay Host"))
                 {
-                    return Camera.allCameras[i];
+                    return true;
                 }
             }
-            return null;
+            return false;
         }
 
         //switch to the internal with the given name
@@ -437,25 +443,79 @@ namespace PlanetarySurfaceStructures
         {
             if (part.internalModel != null)
             {
-                //set the visibility of the additional internal model that is used for JSIAdvancedTransparendPods
-                if (additionalInternalTransform != null)
+                if ((extendedInternalName != string.Empty) && (extendedInternalTransform == null))
                 {
-                    if (!isInternalPacked) 
+                    extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
+                }
+
+                if ((packedInternalName != string.Empty) && (packedInternalTransform == null))
+                {
+                    packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
+                }
+
+                //when the support for JSI advanced transpared pods is enabled
+                if (JSIATPSupportEnabled)
+                {
+                    if ((extendedOverlayHiddenName != string.Empty) && (extendedOverlayHiddenTransform == null))
                     {
-                        //when the stock IVA is active
-                        if ((findCamera("InternalSpaceOverlay Host") != null) && (additionalInternalTransform.gameObject.activeSelf))
+                        extendedOverlayHiddenTransform = part.internalModel.FindModelTransform(extendedOverlayHiddenName);
+                    }
+
+                    if ((packedOverlayHiddenName != string.Empty) && (packedOverlayHiddenTransform == null))
+                    {
+                        packedOverlayHiddenTransform = part.internalModel.FindModelTransform(packedOverlayHiddenName);
+                    }
+
+                    bool overlayActive = isStockOverlayActive();
+
+                    //set the visibility of the additional internal model that is used for JSIAdvancedTransparendPods
+                    if (extendedOverlayHiddenTransform != null)
+                    {
+                        if (!isInternalPacked)
                         {
-                            additionalInternalTransform.gameObject.SetActive(false);
+                            //when the stock IVA is active
+                            if (overlayActive)
+                            {
+                                if (extendedOverlayHiddenTransform.gameObject.activeSelf)
+                                {
+                                    extendedOverlayHiddenTransform.gameObject.SetActive(false);
+                                }
+                            }
+                            else if (!extendedOverlayHiddenTransform.gameObject.activeSelf)
+                            {
+                                extendedOverlayHiddenTransform.gameObject.SetActive(true);
+                            }
                         }
-                        else if (!additionalInternalTransform.gameObject.activeSelf)
+                        else if (extendedOverlayHiddenTransform.gameObject.activeSelf)
                         {
-                            additionalInternalTransform.gameObject.SetActive(true);
+                            extendedOverlayHiddenTransform.gameObject.SetActive(false);
                         }
                     }
-                    else if (additionalInternalTransform.gameObject.activeSelf)
+
+                    //set the visibility of the additional internal model that is used for JSIAdvancedTransparendPods
+                    if (packedOverlayHiddenTransform != null)
                     {
-                        additionalInternalTransform.gameObject.SetActive(false);
+                        if (isInternalPacked)
+                        {
+                            //when the stock IVA is active
+                            if (overlayActive)
+                            {
+                                if (packedOverlayHiddenTransform.gameObject.activeSelf)
+                                {
+                                    packedOverlayHiddenTransform.gameObject.SetActive(false);
+                                }
+                            }
+                            else if (!packedOverlayHiddenTransform.gameObject.activeSelf)
+                            {
+                                packedOverlayHiddenTransform.gameObject.SetActive(true);
+                            }
+                        }
+                        else if (packedOverlayHiddenTransform.gameObject.activeSelf)
+                        {
+                            packedOverlayHiddenTransform.gameObject.SetActive(false);
+                        }
                     }
+
                 }
 
                 //set the visibility of the extended internal model
@@ -469,11 +529,6 @@ namespace PlanetarySurfaceStructures
                     packedInternalTransform.gameObject.SetActive(isInternalPacked);
                 }
             }
-        }
-
-        public bool IsInternalExtended()
-        {
-            return !isInternalPacked;
         }
     }
 }
