@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using KSP.IO;
 
 namespace PlanetarySurfaceStructures
 {
@@ -21,63 +17,74 @@ namespace PlanetarySurfaceStructures
         }
 
         private ConfigNode node;
+
+        //saves where the manufacturer should be shown
         private bool showManufacturer = false;
+
+        //saves whether the mod shoud add a filter for all its parts
         private bool showModFilter = false;
-        private bool separateLifeSupport = false;
+
+        //saves wheter the parts of this mod have their own category
         private bool showSeparateFunctionCategory = false;
 
+        /**
+         * Get if the manufacturer should be shown
+         **/
         public bool ShowManufacturer
         {
             get { return showManufacturer; }
         }
+
+        /**
+          * Get if the mod should have its own filter
+          * @return true when it should be shown, else false
+         **/
         public bool ShowModFilter
         {
             get { return showModFilter; }
         }
+
+        /**
+          * Get if the mod should have its own category
+          * @return true when it should be shown, else false
+         **/
         public bool ShowSeparateFunctionCategory
         {
             get { return showSeparateFunctionCategory; }
         }
-        public bool SeparateLifeSupport
-        {
-            get { return separateLifeSupport; }
-        }
 
-        /**
-         * The constructor for this class reading the settings
-         */
+        // The constructor for this class reading the settings
         private KPBSConfiguration()
         {
             Debug.Log("[KPBS]Init settings");
 
+            //try to get the config node
             try
             {
-                node = GameDatabase.Instance.GetConfigNodes("KPBSConfig").FirstOrDefault();
+                node = GameDatabase.Instance.GetConfigNodes("KPBSConfig")[0];
             }
             catch (Exception e)
             {
                 Debug.Log("[KPBS] ERROR config node null exception");
             }
 
-
+            //when ne node is null, report an error
             if (node == null)
             {
                 Debug.Log("[KPBS] ERROR config node is null");
             }
 
+            //try to read and set all the settings
             try
             {
                 showManufacturer = bool.Parse(node.GetValue("showManufacturers"));
-
-
                 showModFilter = bool.Parse(node.GetValue("showModCategory"));
                 showSeparateFunctionCategory = bool.Parse(node.GetValue("separateFunctionFilter"));
-                separateLifeSupport = bool.Parse(node.GetValue("separateLifeSupport"));
 
+                //Log the settings that are read from the config file
                 Debug.Log("[KPBS]showManufacturer: " + showManufacturer);
                 Debug.Log("[KPBS]showModFilter: " + showModFilter);
                 Debug.Log("[KPBS]showSeparateFunctionCategory: " + showSeparateFunctionCategory);
-                Debug.Log("[KPBS]separateLifeSupport: " + separateLifeSupport);
             }
             catch (ArgumentNullException exception)
             {

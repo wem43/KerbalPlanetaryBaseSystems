@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 namespace PlanetarySurfaceStructures 
 {
@@ -74,9 +71,22 @@ namespace PlanetarySurfaceStructures
         //the name of the extended internal
         [KSPField]
         public string extendedInternalName = "extended";
-        
+
+        //the name of the additional internal
+        [KSPField]
+        public string additionalInternalName;
+
         //indicate that the packed internal is currently used
         private bool isInternalPacked = true;
+
+        //the transform for the extended part
+        Transform extendedInternalTransform;
+
+        //the transform for the packed part
+        Transform packedInternalTransform;
+
+        //the transform for an additional depthmask
+        private Transform additionalInternalTransform;
 
         //----------------internal data-----------------
 
@@ -92,10 +102,9 @@ namespace PlanetarySurfaceStructures
         [KSPAction("Toggle deployment")]
         public void toggleAction(KSPActionParam param) 
 		{
-            if ((availableInVessel) && (!status.Equals("Deployed") || (this.part.protoModuleCrew.Count() <= crewCapcityRetracted))) {
+            if ((availableInVessel) && (!status.Equals("Deployed") || (this.part.protoModuleCrew.Count <= crewCapcityRetracted))) {
                 toggleAnimation();
-            }
-            
+            }            
         }
 
 		/**
@@ -108,7 +117,7 @@ namespace PlanetarySurfaceStructures
 			{
 				//only retract when the module is retracting or retracted and no kerbals are inside
                 if ((status.Equals("Deployed") || status.Equals("Deploying..")) && 
-                    (part.protoModuleCrew.Count() <= crewCapcityRetracted)) 
+                    (part.protoModuleCrew.Count <= crewCapcityRetracted)) 
 				{
                     toggleAnimation();
                 }
@@ -185,7 +194,12 @@ namespace PlanetarySurfaceStructures
             isInternalPacked = true;
 
             //get the deploy animation
-            deployAnim = part.FindModelAnimators(animationName).FirstOrDefault();
+            deployAnim = part.FindModelAnimators(animationName)[0];
+
+            //find the transforms
+            extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
+            packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
+            additionalInternalTransform = part.internalModel.FindModelTransform(additionalInternalName);
 
             //Only initialize when an animation is available
             if (deployAnim != null) 
@@ -193,7 +207,7 @@ namespace PlanetarySurfaceStructures
 				// Run Only on first launch
                 if (!hasBeenInitialized) 
                 {
-                    if (part.protoModuleCrew.Count() > crewCapcityRetracted)
+                    if (part.protoModuleCrew.Count > crewCapcityRetracted)
                     {
                         nextIsReverse = true;
                         animationTime = 0.999f;
@@ -209,7 +223,7 @@ namespace PlanetarySurfaceStructures
                     hasBeenInitialized = true;
                 }
 
-                if (part.protoModuleCrew.Count() > crewCapcityRetracted)
+                if (part.protoModuleCrew.Count > crewCapcityRetracted)
                 {
                     animationTime = 0.999f;
                     deployAnim[animationName].speed = 1f;
@@ -320,8 +334,6 @@ namespace PlanetarySurfaceStructures
                         if (part.CrewCapacity != crewCapacityDeployed)
 						{
 							part.CrewCapacity = crewCapacityDeployed;
-                            //part.CheckTransferDialog();
-                            //part.Ch
                             GameEvents.onVesselWasModified.Fire(vessel);
 						}
 						
@@ -370,14 +382,13 @@ namespace PlanetarySurfaceStructures
 					if (part.CrewCapacity != crewCapcityRetracted)
                     {
                         part.CrewCapacity = crewCapcityRetracted;
-                        //part.CheckTransferDialog();
                         GameEvents.onVesselWasModified.Fire(vessel);
                     } 
                 }
             }
 
             //show/hide GUI element depending on the crew count
-            if (part.protoModuleCrew.Count() > crewCapcityRetracted)
+            if (part.protoModuleCrew.Count > crewCapcityRetracted)
             {
                 Events["toggleAnimation"].active = false;
             }
@@ -386,7 +397,7 @@ namespace PlanetarySurfaceStructures
                 Events["toggleAnimation"].active = true;
             }
 
-            int newCrew = part.protoModuleCrew.Count();
+            int newCrew = part.protoModuleCrew.Count;
 
             //check if the part has to be deployed because of too many kerbals inside
             if (newCrew > part.CrewCapacity) {
@@ -406,18 +417,53 @@ namespace PlanetarySurfaceStructures
             CheckIVAState();
         }
 
+
+        //find a camera by its name
+        private Camera findCamera(string cameranName)
+        {
+            int count = Camera.allCamerasCount;
+            for (int i = 0; i < count; ++i)
+            {
+                if (Camera.allCameras[i].name.Equals(cameranName))
+                {
+                    return Camera.allCameras[i];
+                }
+            }
+            return null;
+        }
+
         //switch to the internal with the given name
         private void CheckIVAState()
         {
             if (part.internalModel != null)
             {
-                Transform extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
-                Transform packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
+                //set the visibility of the additional internal model that is used for JSIAdvancedTransparendPods
+                if (additionalInternalTransform != null)
+                {
+                    if (!isInternalPacked) 
+                    {
+                        //when the stock IVA is active
+                        if ((findCamera("InternalSpaceOverlay Host") != null) && (additionalInternalTransform.gameObject.activeSelf))
+                        {
+                            additionalInternalTransform.gameObject.SetActive(false);
+                        }
+                        else if (!additionalInternalTransform.gameObject.activeSelf)
+                        {
+                            additionalInternalTransform.gameObject.SetActive(true);
+                        }
+                    }
+                    else if (additionalInternalTransform.gameObject.activeSelf)
+                    {
+                        additionalInternalTransform.gameObject.SetActive(false);
+                    }
+                }
 
+                //set the visibility of the extended internal model
                 if ((extendedInternalTransform != null) && (extendedInternalTransform.gameObject.activeSelf == isInternalPacked))
                 {
                     extendedInternalTransform.gameObject.SetActive(!isInternalPacked);
                 }
+                //Set the visibility of the packed internal model
                 if ((packedInternalTransform != null) && (packedInternalTransform.gameObject.activeSelf != isInternalPacked))
                 {
                     packedInternalTransform.gameObject.SetActive(isInternalPacked);
@@ -425,27 +471,9 @@ namespace PlanetarySurfaceStructures
             }
         }
 
-        //check the state of the IVA because it changes when a kerbal enters a part
-        /*private void CheckIVAState()
+        public bool IsInternalExtended()
         {
-            if ((observeIVA) && (part.internalModel != null))
-            {
-                observeIVA = false;
-
-                Transform extendedInternalTransform = part.internalModel.FindModelTransform(extendedInternalName);
-                Transform packedInternalTransform = part.internalModel.FindModelTransform(packedInternalName);
-
-                if ((extendedInternalTransform != null) && (extendedInternalTransform.gameObject.activeSelf == isInternalPacked))
-                {
-                    extendedInternalTransform.gameObject.SetActive(!isInternalPacked);
-                    observeIVA = true;
-                }
-                if ((packedInternalTransform != null) && (packedInternalTransform.gameObject.activeSelf != isInternalPacked))
-                {
-                    packedInternalTransform.gameObject.SetActive(isInternalPacked);
-                    observeIVA = true;
-                }
-            }
-        }*/
+            return !isInternalPacked;
+        }
     }
 }

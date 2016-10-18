@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 
 namespace PlanetarySurfaceStructures 
@@ -190,9 +189,9 @@ namespace PlanetarySurfaceStructures
          */
         private bool checkNumCrewChanged()
         {
-            if (numCurrentCrew != this.part.protoModuleCrew.Count())
+            if (numCurrentCrew != this.part.protoModuleCrew.Count)
             {
-                numCurrentCrew = this.part.protoModuleCrew.Count();
+                numCurrentCrew = this.part.protoModuleCrew.Count;
                 return true;
             }
             return false;
@@ -204,7 +203,7 @@ namespace PlanetarySurfaceStructures
         //the situation is only valid when the minimal crew is in the lab
         public override bool IsSituationValid()
         {
-            return (this.part.protoModuleCrew.Count() >= minimalCrew);
+            return (this.part.protoModuleCrew.Count >= minimalCrew);
         }
 
 
@@ -235,7 +234,6 @@ namespace PlanetarySurfaceStructures
             newRecipe.TakeAmount = 1;// (float)rate;
 
             //add the inputs to the recipe
-            //foreach (ResourceRatio res in inputList)
             for (int i = 0; i < inputList.Count; i++)
             {
                 
@@ -251,7 +249,6 @@ namespace PlanetarySurfaceStructures
                 }
             }
             //add the outputs to the recipe
-            //foreach (ResourceRatio res in outputList)
             for (int i = 0; i < outputList.Count; i++)
             {
                 ResourceRatio newRes = new ResourceRatio();
@@ -273,7 +270,6 @@ namespace PlanetarySurfaceStructures
             }
 
             //only add the fertilizer as a requirement when it is used
-            //foreach (ResourceRatio res in reqList)
             for (int i = 0; i < reqList.Count; i++)
             {
                 if (reqList[i].ResourceName.Equals(boosterName))
@@ -314,9 +310,9 @@ namespace PlanetarySurfaceStructures
 
             effText = ((int)(maxProductionRate * 100.0f)).ToString() + "%";
 
-            if (part.protoModuleCrew.Count() < minimalCrew)
+            if (part.protoModuleCrew.Count < minimalCrew)
             {
-                gHstatus = "No Crew! (" + part.protoModuleCrew.Count() + "/" + minimalCrew + ")";
+                gHstatus = "No Crew! (" + part.protoModuleCrew.Count + "/" + minimalCrew + ")";
             }
             else
             {
@@ -325,6 +321,7 @@ namespace PlanetarySurfaceStructures
 
             //init the resources
             initResources();
+            updateRateGUI();
 
             if (!fertilizerFound)
             {
@@ -348,9 +345,9 @@ namespace PlanetarySurfaceStructures
 
                 effText = ((int)(maxProductionRate * 100.0f)).ToString() + "%";
 
-                if (part.protoModuleCrew.Count() < minimalCrew)
+                if (part.protoModuleCrew.Count < minimalCrew)
                 {
-                    gHstatus = "No Crew! (" + part.protoModuleCrew.Count() + "/" + minimalCrew + ")";
+                    gHstatus = "No Crew! (" + part.protoModuleCrew.Count + "/" + minimalCrew + ")";
                 }
                 else
                 {
@@ -364,7 +361,6 @@ namespace PlanetarySurfaceStructures
          */
         private void initResources()
         {
-            //foreach (ResourceRatio res in inputList)
             for (int i = 0; i < inputList.Count; i++)
             {
                 if (inputList[i].ResourceName.Equals(boosterName))
@@ -379,7 +375,7 @@ namespace PlanetarySurfaceStructures
          */
         private void setEfficiency()
         {
-            maxProductionRate = minimalRate + (part.protoModuleCrew.Count() - minimalCrew) * efficiencyFactor;
+            maxProductionRate = minimalRate + (part.protoModuleCrew.Count - minimalCrew) * efficiencyFactor;
             if (maxProductionRate < 0.0f)
             {
                 maxProductionRate = 0.0f;

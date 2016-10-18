@@ -4,17 +4,23 @@ namespace PlanetarySurfaceStructures
 {
     class ModuleKPBSConverter : ModuleResourceConverter
     {
+        //the minimal rate of the converter
         [KSPField]
         public float minimalRate = 0.25f;
+
+        //the maximal rate of the converter
         [KSPField]
         public float maximalRate = 1.0f;
+
+        //the size of the steps between min and max
         [KSPField]
         public float rateStepSize = 0.25f;
 		
-		
+		//the string to display to change the conversion rate
 		[KSPField]
         public string changeRateString = "Change conversion rate";
 		
+        //the name of the converter rate
 		[KSPField]
         public string converterRateName = "Converter rate";
 		
@@ -23,13 +29,16 @@ namespace PlanetarySurfaceStructures
         public float currentRate = 1.0f;
 		
 		
-
+        //the production rate that is displayed to the user
         [KSPField(guiActive = true, guiName = "Conversion Rate", guiActiveEditor = true)]
         public string guiProductionRate = "100%";
 
         //-----------------------Actions-------------------------
-		
-		[KSPAction("Change Production Rate")]
+
+        /**
+         * Change the production rate
+         */
+        [KSPAction("Change Production Rate")]
         public void ChangeRateAction(KSPActionParam param)
         {
             changeProductionRate();
@@ -45,19 +54,20 @@ namespace PlanetarySurfaceStructures
             changeProductionRate();
         }
 		
-		//set the names of the actions
+		/**
+          *set the names of the actions
+          **/
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
+
+            updateRateGUI();
 
             Events["changeRate"].guiName = changeRateString;
             Fields["guiProductionRate"].guiName = converterRateName;
         }
 		
-
-        /**
-         * Change the rate for the production
-         */
+        // Change the rate for the production
         private void changeProductionRate()
         {
             currentRate += rateStepSize;
@@ -68,17 +78,13 @@ namespace PlanetarySurfaceStructures
             updateRateGUI();
         }
 
-        /**
-         * Update the displayed production rate for the greenhouse
-         */
+        // Update the displayed production rate for the greenhouse
         private void updateRateGUI()
         {
             guiProductionRate = (int)(Math.Round(currentRate * 100.0f)) + "%";
         }
 
-        /**
-         * Prepare the recipe with regard to the amount of crew in this module
-         */
+        // Prepare the recipe with regard to the amount of crew in this module
         protected override ConversionRecipe PrepareRecipe(double deltatime)
         {
             double rate = currentRate;
@@ -99,8 +105,8 @@ namespace PlanetarySurfaceStructures
             }
 
             //the amounts (use?)
-            newRecipe.FillAmount = 1;// (float)rate;
-            newRecipe.TakeAmount = 1;// (float)rate;
+            newRecipe.FillAmount = 1;
+            newRecipe.TakeAmount = 1;
 
             //add the inputs to the recipe
             for (int i = 0; i < inputList.Count; i++)
