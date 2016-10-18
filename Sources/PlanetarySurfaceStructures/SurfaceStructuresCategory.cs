@@ -374,7 +374,7 @@ namespace PlanetarySurfaceStructures
 
                     //Find the function filter
                     KSP.UI.Screens.PartCategorizer.Category functionFilter = KSP.UI.Screens.PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Function");
-                    KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "KPBS Life Support", filterIconLifeSupport, p => filter_KKAOSS_LS(p));
+                    KSP.UI.Screens.PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Life Support", filterIconLifeSupport, p => filter_KKAOSS_LS(p));
 
                     //set all the categories to none to prevent this part to be added
                     //for (int i = 0; i < LS_parts.Count; i++)
