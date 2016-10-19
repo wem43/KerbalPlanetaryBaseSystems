@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace PlanetarySurfaceStructures
 {
@@ -6,19 +7,37 @@ namespace PlanetarySurfaceStructures
     {
         //the name of the additional internal
         [KSPField]
-        public string hiddenOverlayTransformName = string.Empty;
+        public string hiddenOverlayTransformNames = string.Empty;
 
         //the transform for an additional depthmask
-        private Transform hiddenOverlayTransform;
+        //private Transform hiddenOverlayTransform;
+
+        private string[] trasformNames;
+
+        private List<Transform> transforms;
 
         /**
          * Called at the start. Initialize animation and state of this module
          */
         public override void OnStart(PartModule.StartState state)
         {
-            if ((hiddenOverlayTransform == null) && (hiddenOverlayTransformName != null) && (hiddenOverlayTransformName != string.Empty))
+            if (hiddenOverlayTransformNames != string.Empty)
             {
-                hiddenOverlayTransform = part.internalModel.FindModelTransform(hiddenOverlayTransformName);
+                transforms = new List<Transform>();
+                trasformNames = hiddenOverlayTransformNames.Split('|');
+                int numNames = trasformNames.Length;
+
+                for (int i = 0; i < numNames; i++)
+                {
+                    if (trasformNames[i] != string.Empty)
+                    {
+                        Transform newTransform = part.internalModel.FindModelTransform(trasformNames[i]);
+                        if (newTransform != null)
+                        {
+                            transforms.Add(newTransform);
+                        }
+                    }
+                }
             }
         }
 
@@ -32,23 +51,45 @@ namespace PlanetarySurfaceStructures
             {
                 return;
             }
-            
-            //search for the transform (it seems to get lost when only loading it in onStart()
-            if ((hiddenOverlayTransform == null) && (hiddenOverlayTransformName != null) && (hiddenOverlayTransformName != string.Empty))
+
+            if ((transforms == null) && (hiddenOverlayTransformNames != string.Empty))
             {
-                hiddenOverlayTransform = part.internalModel.FindModelTransform(hiddenOverlayTransformName);
+                transforms = new List<Transform>();
+                trasformNames = hiddenOverlayTransformNames.Split('|');
+                int numNames = trasformNames.Length;
+
+                for (int i = 0; i < numNames; i++)
+                {
+                    if (trasformNames[i] != string.Empty)
+                    {
+                        Transform newTransform = part.internalModel.FindModelTransform(trasformNames[i]);
+                        if (newTransform != null)
+                        {
+                            transforms.Add(newTransform);
+                        }
+                    }
+                }
             }
 
-            //update the state of the transform
-            if (hiddenOverlayTransform != null)
-            {
-                if ((isStockOverlayActive()) && (hiddenOverlayTransform.gameObject.activeSelf))
+            if ((transforms != null) && (transforms.Count > 0)) {
+                int numTransforms = transforms.Count;
+                for (int i = 0; i < numTransforms; i++)
                 {
-                    hiddenOverlayTransform.gameObject.SetActive(false);
-                }
-                else if ((!isStockOverlayActive()) && (!hiddenOverlayTransform.gameObject.activeSelf))
-                {
-                    hiddenOverlayTransform.gameObject.SetActive(true);
+                    if (HighLogic.LoadedSceneIsEditor)
+                    {
+                        if ((transforms[i].gameObject.activeSelf))
+                        {
+                            transforms[i].gameObject.SetActive(false);
+                        }
+                    }
+                    else if ((isStockOverlayActive()) && (transforms[i].gameObject.activeSelf))
+                    {
+                        transforms[i].gameObject.SetActive(false);
+                    }
+                    else if ((!isStockOverlayActive()) && (!transforms[i].gameObject.activeSelf))
+                    {
+                        transforms[i].gameObject.SetActive(true);
+                    }
                 }
             }
         }
@@ -58,9 +99,14 @@ namespace PlanetarySurfaceStructures
          */
         public void OnDestroy()
         {
-            if (hiddenOverlayTransform != null)
+            if ((transforms != null) && (transforms.Count > 0))
             {
-                hiddenOverlayTransform.gameObject.SetActive(true);
+                int numTransforms = transforms.Count;
+                for (int i = 0; i < numTransforms; i++)
+                {
+                    transforms[i].gameObject.SetActive(true);
+                }
+                transforms = null;
             }
         }
 

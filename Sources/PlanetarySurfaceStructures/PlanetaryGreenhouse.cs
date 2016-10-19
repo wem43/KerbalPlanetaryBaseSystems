@@ -326,12 +326,12 @@ namespace PlanetarySurfaceStructures
             if (!fertilizerFound)
             {
                 Events["ToggleGrowthMode"].guiActive = false;
-                Debug.Log("[KPBS]Button disabled");
+                //Debug.Log("[KPBS]Button disabled");
             }
             else
             {
                 Events["ToggleGrowthMode"].guiActive = true;
-                Debug.Log("[KPBS]Button enabled");
+                //Debug.Log("[KPBS]Button enabled");
             }
         }
 
