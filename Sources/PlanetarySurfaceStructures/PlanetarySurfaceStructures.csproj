@@ -49,7 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KPBSTransparendPodHelper.cs" />
+    <Compile Include="ModuleKPBSTransparendPodHelper.cs" />
     <Compile Include="ModuleKPBSDependentLight.cs" />
     <Compile Include="KPBSConfiguration.cs" />
     <Compile Include="ModuleKPBSCorridorNodes.cs" />

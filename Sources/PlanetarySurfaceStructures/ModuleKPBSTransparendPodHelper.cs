@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace PlanetarySurfaceStructures
 {
-    class KPBSTransparendPodHelper : PartModule
+    class ModuleKPBSTransparendPodHelper : PartModule
     {
         //the name of the additional internal
         [KSPField]
@@ -16,31 +16,6 @@ namespace PlanetarySurfaceStructures
 
         private List<Transform> transforms;
 
-        /**
-         * Called at the start. Initialize animation and state of this module
-         */
-        public override void OnStart(PartModule.StartState state)
-        {
-            if (hiddenOverlayTransformNames != string.Empty)
-            {
-                transforms = new List<Transform>();
-                trasformNames = hiddenOverlayTransformNames.Split('|');
-                int numNames = trasformNames.Length;
-
-                for (int i = 0; i < numNames; i++)
-                {
-                    if (trasformNames[i] != string.Empty)
-                    {
-                        Transform newTransform = part.internalModel.FindModelTransform(trasformNames[i]);
-                        if (newTransform != null)
-                        {
-                            transforms.Add(newTransform);
-                        }
-                    }
-                }
-            }
-        }
-
 
         /**
          * The update method of the module
@@ -52,12 +27,11 @@ namespace PlanetarySurfaceStructures
                 return;
             }
 
-            if ((transforms == null) && (hiddenOverlayTransformNames != string.Empty))
+            if ((transforms == null) && (hiddenOverlayTransformNames != null) && (hiddenOverlayTransformNames != string.Empty))
             {
                 transforms = new List<Transform>();
                 trasformNames = hiddenOverlayTransformNames.Split('|');
                 int numNames = trasformNames.Length;
-
                 for (int i = 0; i < numNames; i++)
                 {
                     if (trasformNames[i] != string.Empty)
@@ -75,18 +49,24 @@ namespace PlanetarySurfaceStructures
                 int numTransforms = transforms.Count;
                 for (int i = 0; i < numTransforms; i++)
                 {
+                    if (transforms[i] == null)
+                    {
+                        transforms = null;
+                        return;
+                    }
+
                     if (HighLogic.LoadedSceneIsEditor)
                     {
-                        if ((transforms[i].gameObject.activeSelf))
+                        if ((transforms[i].gameObject != null) && (transforms[i].gameObject.activeSelf))
                         {
                             transforms[i].gameObject.SetActive(false);
                         }
                     }
-                    else if ((isStockOverlayActive()) && (transforms[i].gameObject.activeSelf))
+                    else if ((isStockOverlayActive()) && (transforms[i].gameObject != null) && (transforms[i].gameObject.activeSelf))
                     {
                         transforms[i].gameObject.SetActive(false);
                     }
-                    else if ((!isStockOverlayActive()) && (!transforms[i].gameObject.activeSelf))
+                    else if ((!isStockOverlayActive()) && (transforms[i].gameObject != null) && (!transforms[i].gameObject.activeSelf))
                     {
                         transforms[i].gameObject.SetActive(true);
                     }
@@ -113,6 +93,11 @@ namespace PlanetarySurfaceStructures
         //find a camera by its name
         private bool isStockOverlayActive()
         {
+            if (Camera.allCameras == null)
+            {
+                return false;
+            }
+
             int count = Camera.allCamerasCount;
             for (int i = 0; i < count; ++i)
             {
