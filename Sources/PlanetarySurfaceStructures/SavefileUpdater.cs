@@ -118,6 +118,13 @@ namespace PlanetarySurfaceStructures
                 foreach (FileInfo file in files)
                 {
                     string temppath = Path.Combine(destDirName, file.Name);
+                    //delete the file when it already exists
+                    if (File.Exists(temppath))
+                    {
+                        FileInfo fi = new FileInfo(temppath);
+                        fi.Delete();
+                    }
+                        
                     file.CopyTo(temppath, false);
                 }
 
