@@ -1,19 +1,30 @@
 {
-  "NAME": "Kerbal Planetary Base Systems",
-  "VERSION": {
-    "MAJOR": 1,
-    "MINOR": 3,
-    "PATCH": 2
-  },
-  "KSP_VERSION": {
-    "MAJOR": 1,
-    "MINOR": 2,
-    "PATCH": 0
-  },
-  "KSP_VERSION_MIN":
-  {
-  	"MAJOR": 1,
-  	"MINOR": 2,
-	"PATCH": 0
-  },
+    "NAME": "Kerbal Planetary Base Systems",
+    
+    "URL":"https://github.com/Nils277/KerbalPlanetaryBaseSystems/blob/master/FOR_RELEASE/GameData/PlanetaryBaseInc/PlanetaryBaseInc.version",
+    "DOWNLOAD":"https://github.com/Nils277/KerbalPlanetaryBaseSystems/releases",
+    
+    "GITHUB":{
+        "USERNAME":"Nils277",
+        "REPOSITORY":"KerbalPlanetaryBaseSystems",
+        "ALLOW_PRE_RELEASE":false
+    }, 
+
+    "VERSION": {
+        "MAJOR": 1,
+        "MINOR": 3,
+        "PATCH": 3
+    },
+  
+    "KSP_VERSION": {
+        "MAJOR": 1,
+        "MINOR": 2,
+        "PATCH": 1
+    },
+    
+    "KSP_VERSION_MIN": {
+        "MAJOR": 1,
+        "MINOR": 2,
+        "PATCH": 0
+    }
 }
