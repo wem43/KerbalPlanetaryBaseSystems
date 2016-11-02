@@ -1,35 +1,38 @@
 ﻿using System;
 using SaveUpgradePipeline;
-using UnityEngine;
 
 namespace PlanetarySurfaceStructures
 {
-    [UpgradeModule(LoadContext.SFS | LoadContext.Craft, sfsNodeUrl = "GAME/FLIGHTSTATE/VESSEL/PART", craftNodeUrl = "PART")]
+    [UpgradeModule(LoadContext.SFS | LoadContext.Craft, sfsNodeUrl = "GAME", craftNodeUrl = "PART")]
     public class SaveFileUpgrader : UpgradeScript
     {
-        bool DEBUG = false;
+        ///FLIGHTSTATE/VESSEL/PART"
 
+        //visible name of the upgrader
         public override string Name
         {
             get
             {
-                return "Planetary Base Systems Stack-Node Upgrader";
+                return "KPBS Upgrader_1.3.3";
             }
         }
 
+        //description for the upgrade process 
         public override string Description
         {
             get
             {
-                return "Upgrades the names of attachment nodes from some KPBS parts to fix a bug that causes the nodes to disappear";
+                return "Renamed attachment nodes to fix disappearing nodes";
             }
         }
 
+        //check the maximal version
         protected override bool CheckMaxVersion(Version v)
         {
             return v <= TargetVersion;
         }
 
+        //get the earliest version that can be upgraded
         public override Version EarliestCompatibleVersion
         {
             get
@@ -38,18 +41,78 @@ namespace PlanetarySurfaceStructures
             }
         }
 
+        //get the target version of the save file
         public override Version TargetVersion
         {
             get
             {
-                return new Version(1, 2, 0);
+                return new Version(1, 2, 1);
             }
         }
 
+        //test the save file for upgrades
         public override TestResult OnTest(ConfigNode node, LoadContext loadContext, ref string nodeName)
         {
-            string partName = NodeUtil.GetPartNodeName(node, loadContext).Split('_')[0];
-            string[] attachementNodes = node.GetValues("attN");
+            
+            //when the parts of a craft should be checked
+            if (loadContext == LoadContext.Craft)
+            {
+                TestResult tr = checkPart(node, loadContext);
+                return tr;
+            }
+            //when the savefile should be updated
+            else if (loadContext == LoadContext.SFS)
+            {
+                //iterate over all vessels in the savefile
+                ConfigNode[] vessels = node.GetNode("FLIGHTSTATE").GetNodes("VESSEL");
+                for (int i = 0; i < vessels.Length; i++)
+                {
+                    //iterate of all parts in the vessel
+                    ConfigNode[] parts = vessels[i].GetNodes("PART");
+                    for (int j = 0; j < parts.Length; j++)
+                    {
+                        if (checkPart(parts[j], loadContext) == TestResult.Upgradeable)
+                        {
+                            return TestResult.Upgradeable;
+                        }
+                    }
+                }
+                return TestResult.Pass;
+            }
+            return TestResult.Pass;
+        }
+
+        //upgrade the save file
+        public override void OnUpgrade(ConfigNode node, LoadContext loadContext)
+        {
+            //when the part of a craft should be upgraded
+            if (loadContext == LoadContext.Craft)
+            {
+                upgradePart(node, loadContext);
+            }
+            else if (loadContext == LoadContext.SFS)
+            {
+                string partName = NodeUtil.GetPartNodeName(node, loadContext);
+                
+                //iterate over all vessels in the savefile
+                ConfigNode[] vessels = node.GetNode("FLIGHTSTATE").GetNodes("VESSEL");
+                for (int i = 0; i < vessels.Length; i++)
+                {
+                    //iterate of all parts in the vessel
+                    ConfigNode[] parts = vessels[i].GetNodes("PART");
+                    for (int j = 0; j < parts.Length; j++)
+                    {
+                        upgradePart(parts[j], loadContext);
+                    }
+                }
+            }
+        }
+
+        //Check of the parts has to be upgraded
+        private TestResult checkPart(ConfigNode part, LoadContext loadContext)
+        {
+            string partName = NodeUtil.GetPartNodeName(part, loadContext).Split('_')[0];
+            string[] attachementNodes = part.GetValues("attN");
             switch (partName)
             {
                 case "KKAOSS.Storage.g":
@@ -96,15 +159,17 @@ namespace PlanetarySurfaceStructures
                             return TestResult.Upgradeable;
                         }
                     }
-                    break;  
+                    break;
             }
             return TestResult.Pass;
         }
 
-        public override void OnUpgrade(ConfigNode node, LoadContext loadContext)
+
+        //Upgrade the part
+        private void upgradePart(ConfigNode part, LoadContext loadContext)
         {
-            string partName = NodeUtil.GetPartNodeName(node, loadContext).Split('_')[0];
-            string[] attachementNodes = node.GetValues("attN");
+            string partName = NodeUtil.GetPartNodeName(part, loadContext).Split('_')[0];
+            string[] attachementNodes = part.GetValues("attN");
 
             switch (partName)
             {
@@ -119,20 +184,12 @@ namespace PlanetarySurfaceStructures
                         string[] values = attachementNodes[i].Split(',');
                         if (values[0] == "left")
                         {
-                            if (DEBUG)
-                            {
-                                Debug.Log("[KPBS] replacing left node: " + left);
-                            }
-                            node.SetValue("attN", "left" + left + "," + values[1], i, false);
+                            part.SetValue("attN", "left" + left + "," + values[1], i, false);
                             left++;
                         }
-                        else if (values [0] == "right")
+                        else if (values[0] == "right")
                         {
-                            if (DEBUG)
-                            {
-                                Debug.Log("[KPBS] replacing right node: " + left);
-                            }
-                            node.SetValue("attN", "right" + right + "," + values[1], i, false);
+                            part.SetValue("attN", "right" + right + "," + values[1], i, false);
                             right++;
                         }
                     }
@@ -146,11 +203,7 @@ namespace PlanetarySurfaceStructures
                         string[] values = attachementNodes[i].Split(',');
                         if (values[0].StartsWith("node_leg"))
                         {
-                            if (DEBUG)
-                            {
-                                Debug.Log("[KPBS] replacing leg: " + leg);
-                            }
-                            node.SetValue("attN", "leg" + leg + "," + values[1], i, false);
+                            part.SetValue("attN", "leg" + leg + "," + values[1], i, false);
                             leg++;
                         }
                     }
@@ -162,17 +215,13 @@ namespace PlanetarySurfaceStructures
                         string[] values = attachementNodes[i].Split(',');
                         if (values[0] == "inner")
                         {
-                            if (DEBUG)
-                            {
-                                Debug.Log("[KPBS] replacing inner: " + inner);
-                            }
                             if (inner == 1)
                             {
-                                node.SetValue("attN", "innerbottom" + "," + values[1], i, false);
+                                part.SetValue("attN", "innerbottom" + "," + values[1], i, false);
                             }
                             else
                             {
-                                node.SetValue("attN", "innertop" + "," + values[1], i, false);
+                                part.SetValue("attN", "innertop" + "," + values[1], i, false);
                             }
                             inner++;
                         }
@@ -185,11 +234,7 @@ namespace PlanetarySurfaceStructures
                         string[] values = attachementNodes[i].Split(',');
                         if (values[0] == "front")
                         {
-                            if (DEBUG)
-                            {
-                                Debug.Log("[KPBS] replacing front: " + front);
-                            }
-                            node.SetValue("attN", "front" + front + "," + values[1], i, false);
+                            part.SetValue("attN", "front" + front + "," + values[1], i, false);
                             front++;
                         }
                     }

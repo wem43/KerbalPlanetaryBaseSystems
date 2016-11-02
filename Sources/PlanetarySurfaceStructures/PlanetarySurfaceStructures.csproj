@@ -58,7 +58,7 @@
     <Compile Include="PlanetaryGreenhouse.cs" />
     <Compile Include="PlanetaryModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SavefileUpdater.cs" />
+    <Compile Include="SavefileBackup.cs" />
     <Compile Include="SaveFileUpgrader.cs" />
     <Compile Include="SurfaceStructuresCategory.cs" />
   </ItemGroup>
