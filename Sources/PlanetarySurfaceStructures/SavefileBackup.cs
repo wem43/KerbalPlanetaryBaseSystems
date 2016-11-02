@@ -18,8 +18,8 @@ namespace PlanetarySurfaceStructures
             string backupFlagDir = Path.Combine(gameData_dir, backup_flag);
             if (!File.Exists(backupFlagDir) && !Directory.Exists(backup_dir))
             {
-                Vector2 anchormin = new Vector2(0.5f, 0.5f);
-                Vector2 anchormax = new Vector2(0.5f, 0.5f);
+                Vector2 anchormin = new Vector2(0.5f, 2f);
+                Vector2 anchormax = new Vector2(0.5f, 2f);
 
                 Debug.Log("[KPBS] SavefileBackup Awake");
 
@@ -43,22 +43,20 @@ namespace PlanetarySurfaceStructures
                     }, 
                     true);
 
-                PopupDialog.SpawnPopupDialog(anchormin, anchormax,
-                    new MultiOptionDialog(msg, title, skin, dialogGUIBase), false, HighLogic.UISkin, true,
+                PopupDialog pp = PopupDialog.SpawnPopupDialog(anchormin, anchormax,
+                    new MultiOptionDialog(msg, title, skin, dialogGUIBase), true, HighLogic.UISkin, true,
                     string.Empty);
             }
         }
 
         private void TryBackup()
         {
-            Vector2 anchormin = new Vector2(0.5f, 0.5f);
-            Vector2 anchormax = new Vector2(0.5f, 0.5f);
+            Vector2 anchormin = new Vector2(0.5f, 2f);
+            Vector2 anchormax = new Vector2(0.5f, 2f);
             UISkinDef skin = HighLogic.UISkin;
 
             string msg;
             string title;
-
-
 
             if (!BackupSaves())
             {
