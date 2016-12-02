@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModuleKPBSMeshToggle.cs" />
     <Compile Include="ModuleKPBSTransparendPodHelper.cs" />
     <Compile Include="ModuleKPBSDependentLight.cs" />
     <Compile Include="KPBSConfiguration.cs" />

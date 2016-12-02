@@ -77,12 +77,10 @@ namespace PlanetarySurfaceStructures
             //try to read and set all the settings
             try
             {
-                showManufacturer = bool.Parse(node.GetValue("showManufacturers"));
                 showModFilter = bool.Parse(node.GetValue("showModCategory"));
                 showSeparateFunctionCategory = bool.Parse(node.GetValue("separateFunctionFilter"));
 
                 //Log the settings that are read from the config file
-                Debug.Log("[KPBS]showManufacturer: " + showManufacturer);
                 Debug.Log("[KPBS]showModFilter: " + showModFilter);
                 Debug.Log("[KPBS]showSeparateFunctionCategory: " + showSeparateFunctionCategory);
             }

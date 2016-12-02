@@ -14,10 +14,9 @@ CHANGE FILTER
 
 DEPRECATED PARTS
 ---------------
-	There are some parts that are deprecated and should not be used anymore. They are still in this mod to be compatible with older saves.
-    Although they should not be used anymore, they are still visible in some filters in the VAH/SPH.
-    If don't need/want them and have no crafts that use these parts, you can delete them from this mod.
-    To do this, simply remove the "GameData/PlanetaryBaseInc/BaseSystem/Parts/Legacy" folder
+	Prior to version 1.3.2 this mod shipped a few deprecated parts that should not have been used since a long time. They were removed. If you still have crafts that use these parts,
+    you can download the parts from here: https://www.dropbox.com/s/ti2vqbqcn5vsxys/PlanetaryBaseInc_Deprecated_Parts.zip?dl=0 
+    Copy the "PlanetaryBaseInc" folder from that download into the "GameData" folder of KSP.
     
 LICENSING
 ---------------
