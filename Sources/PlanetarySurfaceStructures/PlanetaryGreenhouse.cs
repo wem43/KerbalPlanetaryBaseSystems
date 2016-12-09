@@ -67,28 +67,31 @@ namespace PlanetarySurfaceStructures
         {
             ConversionRecipe recipe = base.PrepareRecipe(deltatime);
 
-            //change the rate of the inputs
-            for (int i = 0; i < recipe.Inputs.Count; i++)
+            if (recipe != null)
             {
-                ResourceRatio res = recipe.Inputs[i];
-                res.Ratio *= (productionSpeed / 100f);
-                res.Ratio *= productionRateModifier;
-                recipe.Inputs[i] = res;
-            }
-            //change the rate of the outputs
-            for (int i = 0; i < outputList.Count; i++)
-            {
-                ResourceRatio res = recipe.Outputs[i];
-                res.Ratio *= (productionSpeed / 100f);
-                res.Ratio *= productionRateModifier;
-                recipe.Outputs[i] = res;
-            }
-            //change the value of the requirements
-            for (int i = 0; i < reqList.Count; i++)
-            {
-                ResourceRatio res = recipe.Requirements[i];
-                res.Ratio *= (productionSpeed / 100f);
-                recipe.Requirements[i] = res;
+                //change the rate of the inputs
+                for (int i = 0; i < recipe.Inputs.Count; i++)
+                {
+                    ResourceRatio res = recipe.Inputs[i];
+                    res.Ratio *= (productionSpeed / 100f);
+                    res.Ratio *= productionRateModifier;
+                    recipe.Inputs[i] = res;
+                }
+                //change the rate of the outputs
+                for (int i = 0; i < outputList.Count; i++)
+                {
+                    ResourceRatio res = recipe.Outputs[i];
+                    res.Ratio *= (productionSpeed / 100f);
+                    res.Ratio *= productionRateModifier;
+                    recipe.Outputs[i] = res;
+                }
+                //change the value of the requirements
+                for (int i = 0; i < reqList.Count; i++)
+                {
+                    ResourceRatio res = recipe.Requirements[i];
+                    res.Ratio *= (productionSpeed / 100f);
+                    recipe.Requirements[i] = res;
+                }
             }
 
             return recipe;
