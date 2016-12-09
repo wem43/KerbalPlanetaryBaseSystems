@@ -7,7 +7,7 @@ namespace PlanetarySurfaceStructures
     /**
      * This class is used for corridor nodes which change their appearance according to where another part was attached to them.
      **/
-    class ModuleKPBSCorridorNodes : PartModule
+    class ModuleKPBSCorridorNodes : PartModule, IModuleInfo
     {
         //the names of the nodes
         [KSPField]
@@ -116,11 +116,9 @@ namespace PlanetarySurfaceStructures
 
             for (int i = 0; i < nodenames.Length; i++)
             {
-                Debug.Log("[KPBS] DD 1");
                 AttachNode node = part.FindAttachNode(nodenames[i]);
                 List<Transform> transforms = new List<Transform>();
                 for (int k = 0; k < transformnames[num].Length; k++) {
-                    Debug.Log("[KPBS] DD 2");
                     transforms.AddRange(part.FindModelTransforms(transformnames[num][k]));
                 }
 
@@ -191,13 +189,13 @@ namespace PlanetarySurfaceStructures
 
                         for (int j = 0; j < replacetransformnames[i].Length; j++)
                         {
-                            Debug.Log("[KPBS] Replace Tranform Name: " + replacetransformnames[i][j]);
+                            //Debug.Log("[KPBS] Replace Tranform Name: " + replacetransformnames[i][j]);
                             rTransforms.AddRange(part.FindModelTransforms(replacetransformnames[i][j]));
                         }
 
                         for (int j = 0; j < replacenodenames[num].Length; j++)
                         {
-                            Debug.Log("[KPBS] Replace Node Name: " + replacenodenames[num][j]);
+                            //Debug.Log("[KPBS] Replace Node Name: " + replacenodenames[num][j]);
                             rAttachnodes.Add(part.FindAttachNode(replacenodenames[num][j]));
                         }
 
@@ -214,6 +212,14 @@ namespace PlanetarySurfaceStructures
             }          
             //check the visibility of all the parts
             updateAllCorridors();
+        }
+
+        /**
+         * Get informations about this module
+         */
+        public override string GetInfo()
+        {
+            return "This part changes its appearance depending on where other parts are attached to it";
         }
 
         //clear all the data and the listener for GameEvents
@@ -328,6 +334,21 @@ namespace PlanetarySurfaceStructures
                     }
                 }
             }
+        }
+
+        public string GetModuleTitle()
+        {
+            return "Adaptive Model";
+        }
+
+        public Callback<Rect> GetDrawModulePanelCallback()
+        {
+            return null;
+        }
+
+        public string GetPrimaryField()
+        {
+            return null;
         }
 
         // An internal struct that holds the data for the switchable parts

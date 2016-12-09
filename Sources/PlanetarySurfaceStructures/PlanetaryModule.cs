@@ -2,13 +2,13 @@
 
 namespace PlanetarySurfaceStructures 
 {
-    class PlanetaryModule : PartModule  
-	{
+    class PlanetaryModule : PartModule, IModuleInfo
+    {
         //----------------KSPFields-----------------
 
         /** The name of the animation */
         [KSPField]
-        public string animationName;
+        public string animationName = string.Empty;
 
         /** The name of the startEvent */
         [KSPField]
@@ -543,6 +543,21 @@ namespace PlanetarySurfaceStructures
                     packedInternalTransform.gameObject.SetActive(isInternalPacked);
                 }
             }
+        }
+
+        public string GetModuleTitle()
+        {
+            return "Deployable Part";
+        }
+
+        public Callback<Rect> GetDrawModulePanelCallback()
+        {
+            return null;
+        }
+
+        public string GetPrimaryField()
+        {
+            return null;
         }
     }
 }

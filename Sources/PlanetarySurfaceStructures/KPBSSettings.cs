@@ -4,11 +4,8 @@ namespace PlanetarySurfaceStructures
 {
     class KPBSSettings : GameParameters.CustomParameterNode
     {
-        //[GameParameters.CustomParameterUI("Add custom Filter", autoPersistance = true, toolTip = "Show an additional filter for all the parts of Planetary Base System")]
-        //public bool additionalFilter = true;
-
         [GameParameters.CustomParameterUI("Group all Parts in Function Filter", autoPersistance = true, toolTip = "Group all parts in one category in the function filter")]
-        public bool groupParts = false;
+        public bool functionFilter = false;
 
 
         //get the title
