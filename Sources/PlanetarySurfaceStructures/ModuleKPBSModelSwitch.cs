@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Text;
 
 namespace PlanetarySurfaceStructures
 {
-    class ModuleKPBSModelSwitch : PartModule
+    class ModuleKPBSModelSwitch : PartModule, IModuleInfo
     {
 
         //the names of the transforms
@@ -14,8 +15,10 @@ namespace PlanetarySurfaceStructures
         public string transformVisibleNames = string.Empty;
 
         //--------------persistent states----------------
-        [KSPField(isPersistant = true)]
+        [KSPField(isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Model")]
+        [UI_ChooseOption(scene = UI_Scene.Editor)]
         public int numModel = 0;
+        private int oldModelNum = -1;
 
         //the list of models
         List<ModelTransforms> models;
@@ -24,10 +27,17 @@ namespace PlanetarySurfaceStructures
 
         public bool initialized = false;
 
+        BaseField modelBaseField;
+        UI_ChooseOption modelUIChooser;
+
         //the part that is enabled and disabled
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
+
+            modelBaseField = Fields["numModel"];
+            modelUIChooser = (UI_ChooseOption)modelBaseField.uiControlEditor;
+
 
             string[] transformGroupNames = transformNames.Split(',');
             string[] transformGroupVisibleNames = transformVisibleNames.Split(',');
@@ -56,39 +66,20 @@ namespace PlanetarySurfaceStructures
                 {
                     visibleNames.Add(transformGroupNames[k]);
                 }
+
+
             }
+
+            //set the changes for the modelchooser
+            modelUIChooser.options = visibleNames.ToArray();
 
             //when there is only one model, we do not need to show the controls
             if (models.Count < 2)
             {
-                Events["toggleModel"].active = false;
-                Events["toggleModelNext"].active = false;
-                Events["toggleModelPrev"].active = false;
+                modelBaseField.guiActive = false;
+                modelBaseField.guiActiveEditor = false;
             }
-            //when there are two models make the controls appear as a switch between two parts
-            else if (models.Count == 2)
-            {
-                Events["toggleModel"].active = true;
-                Events["toggleModel"].guiName = "Switch to: " + getName(numModel + 1);
-                Events["toggleModelNext"].active = false;
-                Events["toggleModelPrev"].active = false;
-            }
-            //when there are more than two models, let the user iterate over them
-            else if (models.Count > 2)
-            {
-                Events["toggleModel"].active = false;
-                Events["toggleModelNext"].active = true;
-                Events["toggleModelNext"].guiName = "Next: " + getName(numModel + 1);
-                Events["toggleModelPrev"].active = true;
-                Events["toggleModelPrev"].guiName = "Previous: " + getName(numModel - 1);
-            }
-            
 
-
-            if (!HighLogic.LoadedSceneIsEditor)
-            {
-                Events["toggleModel"].guiActive = false;
-            }
             updateActiveModel();
         }
 
@@ -97,80 +88,11 @@ namespace PlanetarySurfaceStructures
          */
         public void Update()
         {
-            if (!initialized)
+            if (oldModelNum != numModel)
             {
                 updateActiveModel();
-                initialized = true;
             }
         }
-
-        /**
-         * Toggle the visible part
-         */
-        [KSPEvent(name = "toggleModel", guiName = "Switch Model", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
-        public void toggleModel()
-        {
-            numModel++;
-            if (numModel >= models.Count)
-            {
-                numModel = 0;
-            }
-            Events["toggleModel"].guiName = "Switch to: " + getName(numModel + 1);
-            updateActiveModel();
-        }
-
-        /**
-         * Toggle the visible part
-         */
-        [KSPEvent(name = "toggleModelNext", guiName = "Next: ", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
-        public void toggleModelNext()
-        {
-            numModel++;
-            if (numModel >= models.Count)
-            {
-                numModel = 0;
-            }
-            Events["toggleModelNext"].guiName = "Next: " + getName(numModel + 1);
-            Events["toggleModelPrev"].guiName = "Previous: " + getName(numModel - 1);
-            updateActiveModel();
-        }
-
-        /**
-         * Toggle the visible part
-         */
-        [KSPEvent(name = "toggleModelPrev", guiName = "Previous: ", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
-        public void toggleModelPrev()
-        {
-            numModel--;
-            if (numModel < 0)
-            {
-                numModel = models.Count-1;
-            }
-            Events["toggleModelNext"].guiName = "Next: " + getName(numModel + 1);
-            Events["toggleModelPrev"].guiName = "Previous: " + getName(numModel - 1);
-            updateActiveModel();
-        }
-
-
-        // Get the name of the visible part
-        private string getName(int index)
-        {
-            if ((visibleNames.Count > 0) && (visibleNames.Count == models.Count))
-            {
-                if (index < 0)
-                {
-                    index += visibleNames.Count;
-                }
-                else if (index >= models.Count)
-                {
-                    index -= visibleNames.Count;
-                }
-
-                return visibleNames[index];
-            }
-            return "";
-        }
-
 
         // Update which model are active or inactive
         private void updateActiveModel()
@@ -189,6 +111,64 @@ namespace PlanetarySurfaceStructures
                     }
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Get the description shown for this resource 
+        /// </summary>
+        /// <returns>The description of the module</returns>
+        public override string GetInfo()
+        {
+            StringBuilder info = new StringBuilder();
+
+            string[] transformGroupNames = transformNames.Split(',');
+            string[] transformGroupVisibleNames = transformVisibleNames.Split(',');
+            visibleNames = new List<string>();
+
+            //----------------------------------------------------------
+            //create the list of transforms to be made switchable
+            //----------------------------------------------------------
+            for (int k = 0; k < transformGroupNames.Length; k++)
+            {
+                if (transformGroupVisibleNames.Length == transformGroupNames.Length)
+                {
+                    visibleNames.Add(transformGroupVisibleNames[k]);
+                }
+                else
+                {
+                    visibleNames.Add(transformGroupNames[k]);
+                }
+            }
+
+            if (visibleNames.Count > 1)
+            {
+                info.AppendLine("Switchable Models:");
+                info.AppendLine();
+
+                for(int i = 0; i < visibleNames.Count; i++)
+                {
+                    info.Append("• ");
+                    info.Append(visibleNames[i]);
+                    info.AppendLine();
+                }
+            }
+            return info.ToString();
+        }
+
+        public string GetModuleTitle()
+        {
+            return "Model Switch";
+        }
+
+        public Callback<Rect> GetDrawModulePanelCallback()
+        {
+            return null;
+        }
+
+        public string GetPrimaryField()
+        {
+            return null;
         }
 
         // An internal struct that holds the data for the switchable parts

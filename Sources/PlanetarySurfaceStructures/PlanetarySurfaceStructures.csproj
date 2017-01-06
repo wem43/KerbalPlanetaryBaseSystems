@@ -49,7 +49,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KPBSTransparendPodHelper.cs" />
+    <Compile Include="KPBSScenario.cs" />
+    <Compile Include="KPBSSettings.cs" />
+    <Compile Include="ModuleKPBSMeshToggle.cs" />
+    <Compile Include="ModuleKPBSTransparendPodHelper.cs" />
     <Compile Include="ModuleKPBSDependentLight.cs" />
     <Compile Include="KPBSConfiguration.cs" />
     <Compile Include="ModuleKPBSCorridorNodes.cs" />
@@ -58,7 +61,9 @@
     <Compile Include="PlanetaryGreenhouse.cs" />
     <Compile Include="PlanetaryModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SurfaceStructuresCategory.cs" />
+    <Compile Include="SavefileBackup.cs" />
+    <Compile Include="SaveFileUpgrader.cs" />
+    <Compile Include="SurfaceStructuresCategoryFilter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

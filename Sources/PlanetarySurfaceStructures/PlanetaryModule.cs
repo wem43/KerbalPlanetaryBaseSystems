@@ -2,13 +2,13 @@
 
 namespace PlanetarySurfaceStructures 
 {
-    class PlanetaryModule : PartModule  
-	{
+    class PlanetaryModule : PartModule, IModuleInfo
+    {
         //----------------KSPFields-----------------
 
         /** The name of the animation */
         [KSPField]
-        public string animationName;
+        public string animationName = string.Empty;
 
         /** The name of the startEvent */
         [KSPField]
@@ -471,7 +471,14 @@ namespace PlanetarySurfaceStructures
                     //set the visibility of the additional internal model that is used for JSIAdvancedTransparendPods
                     if (extendedOverlayHiddenTransform != null)
                     {
-                        if (!isInternalPacked)
+                        if (HighLogic.LoadedSceneIsEditor)
+                        {
+                            if (extendedOverlayHiddenTransform.gameObject.activeSelf)
+                            {
+                                extendedOverlayHiddenTransform.gameObject.SetActive(false);
+                            }
+                        }
+                        else if (!isInternalPacked)
                         {
                             //when the stock IVA is active
                             if (overlayActive)
@@ -495,7 +502,14 @@ namespace PlanetarySurfaceStructures
                     //set the visibility of the additional internal model that is used for JSIAdvancedTransparendPods
                     if (packedOverlayHiddenTransform != null)
                     {
-                        if (isInternalPacked)
+                        if (HighLogic.LoadedSceneIsEditor)
+                        {
+                            if (packedOverlayHiddenTransform.gameObject.activeSelf)
+                            {
+                                packedOverlayHiddenTransform.gameObject.SetActive(false);
+                            }
+                        }
+                        else if (isInternalPacked)
                         {
                             //when the stock IVA is active
                             if (overlayActive)
@@ -529,6 +543,21 @@ namespace PlanetarySurfaceStructures
                     packedInternalTransform.gameObject.SetActive(isInternalPacked);
                 }
             }
+        }
+
+        public string GetModuleTitle()
+        {
+            return "Deployable Part";
+        }
+
+        public Callback<Rect> GetDrawModulePanelCallback()
+        {
+            return null;
+        }
+
+        public string GetPrimaryField()
+        {
+            return null;
         }
     }
 }

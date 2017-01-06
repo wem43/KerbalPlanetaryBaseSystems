@@ -1,144 +1,59 @@
-﻿using System;
+﻿using UnityEngine;
 
 namespace PlanetarySurfaceStructures
 {
-    class ModuleKPBSConverter : ModuleResourceConverter
+    class ModuleKPBSConverter : ModuleResourceConverter, IModuleInfo
     {
-        //the minimal rate of the converter
-        [KSPField]
-        public float minimalRate = 0.25f;
 
-        //the maximal rate of the converter
-        [KSPField]
-        public float maximalRate = 1.0f;
+        [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Conversion Speed", guiUnits = "%"), UI_FloatRange(minValue = 10f, maxValue = 100f, stepIncrement = 10f)]
+        public float productionSpeed = 100;
 
-        //the size of the steps between min and max
-        [KSPField]
-        public float rateStepSize = 0.25f;
-		
-		//the string to display to change the conversion rate
-		[KSPField]
-        public string changeRateString = "Change conversion rate";
-		
-        //the name of the converter rate
-		[KSPField]
-        public string converterRateName = "Converter rate";
-		
-        //the production rate
-        [KSPField(isPersistant = true)]
-        public float currentRate = 1.0f;
-		
-		
-        //the production rate that is displayed to the user
-        [KSPField(guiActive = true, guiName = "Conversion Rate", guiActiveEditor = true)]
-        public string guiProductionRate = "100%";
-
-        //-----------------------Actions-------------------------
-
-        /**
-         * Change the production rate
-         */
-        [KSPAction("Change Production Rate")]
-        public void ChangeRateAction(KSPActionParam param)
+        public Callback<Rect> GetDrawModulePanelCallback()
         {
-            changeProductionRate();
+            return null;
         }
 
-		
-		/**
-         * Change the production rate
-         */
-        [KSPEvent(name = "changeRate", guiName = "Change conversion rate", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
-        public void changeRate()
+        public string GetModuleTitle()
         {
-            changeProductionRate();
-        }
-		
-		/**
-          *set the names of the actions
-          **/
-        public override void OnStart(StartState state)
-        {
-            base.OnStart(state);
-
-            updateRateGUI();
-
-            Events["changeRate"].guiName = changeRateString;
-            Fields["guiProductionRate"].guiName = converterRateName;
-        }
-		
-        // Change the rate for the production
-        private void changeProductionRate()
-        {
-            currentRate += rateStepSize;
-			
-			if (currentRate > maximalRate) {
-				currentRate = minimalRate;
-			}
-            updateRateGUI();
+            return "Resource Converter";
         }
 
-        // Update the displayed production rate for the greenhouse
-        private void updateRateGUI()
+        public string GetPrimaryField()
         {
-            guiProductionRate = (int)(Math.Round(currentRate * 100.0f)) + "%";
+            return null;
         }
 
         // Prepare the recipe with regard to the amount of crew in this module
         protected override ConversionRecipe PrepareRecipe(double deltatime)
         {
-            double rate = currentRate;
+            ConversionRecipe recipe = base.PrepareRecipe(deltatime);
 
-            ConversionRecipe newRecipe = new ConversionRecipe();
+            if (recipe != null)
+            {
+                //change the rate of the inputs
+                for (int i = 0; i < recipe.Inputs.Count; i++)
+                {
+                    ResourceRatio res = recipe.Inputs[i];
+                    res.Ratio *= (productionSpeed / 100f);
+                    recipe.Inputs[i] = res;
+                }
+                //change the rate of the outputs
+                for (int i = 0; i < recipe.Outputs.Count; i++)
+                {
+                    ResourceRatio res = recipe.Outputs[i];
+                    res.Ratio *= (productionSpeed / 100f);
+                    recipe.Outputs[i] = res;
+                }
+                //change the value of the requirements
+                for (int i = 0; i < recipe.Requirements.Count; i++)
+                {
+                    ResourceRatio res = recipe.Requirements[i];
+                    res.Ratio *= (productionSpeed / 100f);
+                    recipe.Requirements[i] = res;
+                }
+            }
 
-			//the amounts (use?)
-            newRecipe.FillAmount = 1;
-            newRecipe.TakeAmount = 1;
-			
-            if (ModuleIsActive())
-            {
-                status = "In Progress";
-            }
-            else
-            {
-                status = "Inactive";
-            }
-
-            //the amounts (use?)
-            newRecipe.FillAmount = 1;
-            newRecipe.TakeAmount = 1;
-
-            //add the inputs to the recipe
-            for (int i = 0; i < inputList.Count; i++)
-            {
-                ResourceRatio newRes = new ResourceRatio();
-                newRes.ResourceName = inputList[i].ResourceName;
-                newRes.FlowMode = inputList[i].FlowMode;
-                newRes.Ratio = inputList[i].Ratio * rate;
-                newRes.DumpExcess = inputList[i].DumpExcess;
-                newRecipe.Inputs.Add(newRes);
-            }
-            //add the outputs to the recipe
-            for (int i = 0; i < outputList.Count; i++)
-            {
-                ResourceRatio newRes = new ResourceRatio();
-                newRes.ResourceName = outputList[i].ResourceName;
-                newRes.FlowMode = outputList[i].FlowMode;
-                newRes.Ratio = outputList[i].Ratio * rate;
-                newRes.DumpExcess = outputList[i].DumpExcess;
-                newRecipe.Outputs.Add(newRes);
-            }
-            //only add the fertilizer as a requirement when it is used
-            for (int i = 0; i < reqList.Count; i++)
-            {
-                ResourceRatio newRes = new ResourceRatio();
-                newRes.ResourceName = reqList[i].ResourceName;
-                newRes.FlowMode = reqList[i].FlowMode;
-                newRes.Ratio = reqList[i].Ratio * rate;
-                newRes.DumpExcess = outputList[i].DumpExcess;
-                newRecipe.Requirements.Add(newRes);
-            }
-            return newRecipe;
+            return recipe;
         }
     }
 }

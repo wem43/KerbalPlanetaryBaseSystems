@@ -12,6 +12,12 @@ CHANGE FILTER
 ---------------
 	You can change if and where filter for this mods are added. This can be done in the "KPBS_settings.cfg" file.
 
+DEPRECATED PARTS
+---------------
+	Prior to version 1.3.2 this mod shipped a few deprecated parts that should not have been used since a long time. They were removed. If you still have crafts that use these parts,
+    you can download the parts from here: https://www.dropbox.com/s/ti2vqbqcn5vsxys/PlanetaryBaseInc_Deprecated_Parts.zip?dl=0 
+    Copy the "PlanetaryBaseInc" folder from that download into the "GameData" folder of KSP.
+    
 LICENSING
 ---------------
 	CC-BY-NC 
