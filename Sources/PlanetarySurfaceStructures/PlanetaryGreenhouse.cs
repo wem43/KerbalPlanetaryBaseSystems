@@ -32,9 +32,8 @@ namespace PlanetarySurfaceStructures
 
         private float productionRateModifier = 1.0f;
 
-
         [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = false, guiName = "Production Speed", guiUnits = "%"), UI_FloatRange(minValue = 10f, maxValue = 100f, stepIncrement = 10f)]
-        public float productionSpeed = 100;
+        public  float productionSpeed = 100;
 
 
         /**
@@ -69,27 +68,24 @@ namespace PlanetarySurfaceStructures
 
             if (recipe != null)
             {
-                //change the rate of the inputs
                 for (int i = 0; i < recipe.Inputs.Count; i++)
                 {
                     ResourceRatio res = recipe.Inputs[i];
-                    res.Ratio *= (productionSpeed / 100f);
-                    res.Ratio *= productionRateModifier;
+                    res.Ratio = inputList[i].Ratio * (productionSpeed / 100.0f) * productionRateModifier;
                     recipe.Inputs[i] = res;
                 }
                 //change the rate of the outputs
-                for (int i = 0; i < outputList.Count; i++)
+                for (int i = 0; i < recipe.Outputs.Count; i++)
                 {
                     ResourceRatio res = recipe.Outputs[i];
-                    res.Ratio *= (productionSpeed / 100f);
-                    res.Ratio *= productionRateModifier;
+                    res.Ratio = outputList[i].Ratio * (productionSpeed / 100.0f) * productionRateModifier;
                     recipe.Outputs[i] = res;
                 }
                 //change the value of the requirements
-                for (int i = 0; i < reqList.Count; i++)
+                for (int i = 0; i < recipe.Requirements.Count; i++)
                 {
                     ResourceRatio res = recipe.Requirements[i];
-                    res.Ratio *= (productionSpeed / 100f);
+                    res.Ratio = reqList[i].Ratio * (productionSpeed / 100.0f) * productionRateModifier;
                     recipe.Requirements[i] = res;
                 }
             }
