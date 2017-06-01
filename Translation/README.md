@@ -18,7 +18,7 @@ Then change the language tag in the third line of the copy of the *en_us.cfg* fi
 * "es-mx" for mexican spanish
 * "ja" for japanese
 * "ru" for russian
- "zh-cn" for simplified chinese
+* "zh-cn" for simplified chinese
 
 Finally translate all the string after the "=" signs.
 e.g. for russian from 
