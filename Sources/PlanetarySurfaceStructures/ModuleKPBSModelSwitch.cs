@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures
 {
@@ -15,7 +16,7 @@ namespace PlanetarySurfaceStructures
         public string transformVisibleNames = string.Empty;
 
         //--------------persistent states----------------
-        [KSPField(isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Model")]
+        [KSPField(isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "#LOC_KPBS.modelswitch.model")]
         [UI_ChooseOption(scene = UI_Scene.Editor)]
         public int numModel = 0;
         private int oldModelNum = -1;
@@ -37,7 +38,6 @@ namespace PlanetarySurfaceStructures
 
             modelBaseField = Fields["numModel"];
             modelUIChooser = (UI_ChooseOption)modelBaseField.uiControlEditor;
-
 
             string[] transformGroupNames = transformNames.Split(',');
             string[] transformGroupVisibleNames = transformVisibleNames.Split(',');
@@ -143,7 +143,7 @@ namespace PlanetarySurfaceStructures
 
             if (visibleNames.Count > 1)
             {
-                info.AppendLine("Switchable Models:");
+                info.AppendLine(Localizer.GetStringByTag("#LOC_KPBS.modelswitch.models"));
                 info.AppendLine();
 
                 for(int i = 0; i < visibleNames.Count; i++)
@@ -158,7 +158,7 @@ namespace PlanetarySurfaceStructures
 
         public string GetModuleTitle()
         {
-            return "Model Switch";
+            return Localizer.GetStringByTag("#LOC_KPBS.modelswitch.name");// "Model Switch";
         }
 
         public Callback<Rect> GetDrawModulePanelCallback()

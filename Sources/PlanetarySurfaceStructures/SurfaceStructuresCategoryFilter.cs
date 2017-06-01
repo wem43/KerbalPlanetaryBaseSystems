@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using KSP.UI.Screens;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures
 {
@@ -41,10 +42,10 @@ namespace PlanetarySurfaceStructures
         private bool CCKavailable = false;
 
         //The name of the category for the KPBS filter
-        private string functionFilterName = "Planetary Surface Structures";
+        private string functionFilterName = Localizer.GetStringByTag("#LOC_KPBS.categoryfilter.function.name");//"Planetary Surface Structures";
 
         //The name of the function filter
-        private string filterName = "Filter by Function";
+        private string filterName = "Filter by function";
 
         //The instance of this filter
         public static SurfaceStructuresCategoryFilter Instance;
@@ -333,7 +334,7 @@ namespace PlanetarySurfaceStructures
             PartCategorizer.Category functionFilter = PartCategorizer.Instance.filters.Find(f => f.button.categoryName == filterName);
 
             //Add a new subcategory to the function filter
-            PartCategorizer.AddCustomSubcategoryFilter(functionFilter, functionFilterName, filterIconSurfaceStructures, p => filter_KKAOSS(p));
+            PartCategorizer.AddCustomSubcategoryFilter(functionFilter, functionFilterName, functionFilterName, filterIconSurfaceStructures, p => filter_KKAOSS(p));
         }
 
         /// <summary>
@@ -375,28 +376,28 @@ namespace PlanetarySurfaceStructures
                 RUI.Icons.Selectable.Icon ic_lifeSupport = new RUI.Icons.Selectable.Icon("KKAOSS_icon_KPSS", icon_category_ls, icon_category_ls, true);
 
                 //add KPBS to the categories
-                PartCategorizer.Category surfaceStructureFilter = KSP.UI.Screens.PartCategorizer.AddCustomFilter("Planetary Surface Structures", filterIconSurfaceStructures, new Color(0.63f, 0.85f, 0.63f));
+                PartCategorizer.Category surfaceStructureFilter = KSP.UI.Screens.PartCategorizer.AddCustomFilter("Planetary Surface Structures", functionFilterName,  filterIconSurfaceStructures, new Color(0.63f, 0.85f, 0.63f));
 
                 //add subcategories to the KPSS category you just added
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Pods", ic_pods, p => filterCategories(p, PartCategories.Pods));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Fuel Tank", ic_fuels, p => filterCategories(p, PartCategories.FuelTank));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Engines", ic_engine, p => filterCategories(p, PartCategories.Propulsion));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Structural", ic_structural, p => filterCategories(p, PartCategories.Structural));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Coupling", ic_coupling, p => filterCategories(p, PartCategories.Coupling));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Payload", ic_payload, p => filterCategories(p, PartCategories.Payload));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Ground", ic_ground, p => filterCategories(p, PartCategories.Ground));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Thermal", ic_thermal, p => filterCategories(p, PartCategories.Thermal));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Electrical", ic_electrical, p => filterCategories(p, PartCategories.Electrical));
-                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Science", ic_science, p => filterCategories(p, PartCategories.Science));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Pods", Localizer.GetStringByTag("#autoLOC_453549"), ic_pods, p => filterCategories(p, PartCategories.Pods));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Fuel Tank", Localizer.GetStringByTag("#autoLOC_453552"), ic_fuels, p => filterCategories(p, PartCategories.FuelTank));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Engines", Localizer.GetStringByTag("#autoLOC_453555"), ic_engine, p => filterCategories(p, PartCategories.Propulsion));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Structural", Localizer.GetStringByTag("#autoLOC_453561"), ic_structural, p => filterCategories(p, PartCategories.Structural));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Coupling", Localizer.GetStringByTag("#autoLOC_453564"), ic_coupling, p => filterCategories(p, PartCategories.Coupling));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Payload", Localizer.GetStringByTag("#autoLOC_453567"), ic_payload, p => filterCategories(p, PartCategories.Payload));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Ground", Localizer.GetStringByTag("#autoLOC_453573"), ic_ground, p => filterCategories(p, PartCategories.Ground));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Thermal", Localizer.GetStringByTag("#autoLOC_453576"), ic_thermal, p => filterCategories(p, PartCategories.Thermal));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Electrical", Localizer.GetStringByTag("#autoLOC_453579"), ic_electrical, p => filterCategories(p, PartCategories.Electrical));
+                PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Science", Localizer.GetStringByTag("#autoLOC_453585"), ic_science, p => filterCategories(p, PartCategories.Science));
 
                 if (lifeSupportAvailable)
                 {
-                    PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Utility", ic_utility, p => (filterCategories(p, PartCategories.Utility) && !filter_KKAOSS_LS(p)));
-                    PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Life Support", ic_lifeSupport, p => filter_KKAOSS_LS(p));
+                    PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Utility", Localizer.GetStringByTag("#autoLOC_453588"), ic_utility, p => (filterCategories(p, PartCategories.Utility) && !filter_KKAOSS_LS(p)));
+                    PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Life Support", Localizer.GetStringByTag("#LOC_KPBS.categoryfilter.category.lifesupport"), ic_lifeSupport, p => filter_KKAOSS_LS(p));
                 }
                 else
                 {
-                    PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Utility", ic_utility, p => (filterCategories(p, PartCategories.Utility)));
+                    PartCategorizer.AddCustomSubcategoryFilter(surfaceStructureFilter, "Utility", Localizer.GetStringByTag("#autoLOC_453588"), ic_utility, p => (filterCategories(p, PartCategories.Utility)));
                 }
             }
             //-----------------end own category-----------------
@@ -418,8 +419,8 @@ namespace PlanetarySurfaceStructures
                     }
 
                     //Find the function filter
-                    PartCategorizer.Category functionFilter = KSP.UI.Screens.PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Function");
-                    PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Life Support", filterIconLifeSupport, p => filter_KKAOSS_LS(p));
+                    PartCategorizer.Category functionFilter = PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Function");
+                    PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Life Support", Localizer.GetStringByTag("#LOC_KPBS.categoryfilter.category.lifesupport"), filterIconLifeSupport, p => filter_KKAOSS_LS(p));
 
                     //add the greenhouse the the LS mods when other ls mods were found
                     List<AvailablePart> greenhouses = PartLoader.Instance.loadedParts.FindAll(ap => ap.name.Equals("KKAOSS.Greenhouse.g"));

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using UnityEngine;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures 
 {
@@ -27,12 +28,12 @@ namespace PlanetarySurfaceStructures
 
         //-------------------------GUI------------------------
         
-        [KSPField(guiActive = true, guiName = "Greenhouse Status")]
+        [KSPField(guiActive = true, guiName = "#LOC_KPBS.greenhousemodule.status")]
         public string gHstatus = "Operational";
 
         private float productionRateModifier = 1.0f;
 
-        [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = false, guiName = "Production Speed", guiUnits = "%"), UI_FloatRange(minValue = 10f, maxValue = 100f, stepIncrement = 10f)]
+        [KSPField(isPersistant = true, guiActive = true, guiActiveEditor = false, guiName = "#LOC_KPBS.greenhousemodule.speed", guiUnits = "%"), UI_FloatRange(minValue = 10f, maxValue = 100f, stepIncrement = 10f)]
         public  float productionSpeed = 100;
 
 
@@ -106,11 +107,11 @@ namespace PlanetarySurfaceStructures
 
             if (part.protoModuleCrew.Count < minimalCrew)
             {
-                gHstatus = "No Crew! (" + part.protoModuleCrew.Count + "/" + minimalCrew + ")";
+                gHstatus = Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.nocrew") + " (" + part.protoModuleCrew.Count + "/" + minimalCrew + ")";
             }
             else
             {
-                gHstatus = stateOperational + " Operational";
+                gHstatus = stateOperational + " " + Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.operational");
             }
         }
 
@@ -127,11 +128,11 @@ namespace PlanetarySurfaceStructures
 
                 if (part.protoModuleCrew.Count < minimalCrew)
                 {
-                    gHstatus = "No Crew! (" + part.protoModuleCrew.Count + "/" + minimalCrew + ")";
+                    gHstatus = Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.nocrew") + " (" + part.protoModuleCrew.Count + "/" + minimalCrew + ")";
                 }
                 else
                 {
-                    gHstatus = eff + " Operational";
+                    gHstatus = eff + " " + Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.operational");
                 }
             }
         }
@@ -167,10 +168,10 @@ namespace PlanetarySurfaceStructures
 
             info.AppendLine(lines[0]);
             info.AppendLine();
-            info.AppendLine("<b>Minimum Crew to Operate:</b>");
-            info.AppendLine("  " + minimalCrew + " at " + ((int)(minimalRate * 100.0f)).ToString() + "% Efficiency" );
-            info.AppendLine("<b>Maximal Efficieny with: </b>");
-            info.AppendLine("  " + maximalCrew + " Kerbals");
+            info.AppendLine(Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.info.min"));
+            info.AppendLine("  " + minimalCrew + " " + Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.info.at") + " " + ((int)(minimalRate * 100.0f)).ToString() + "% " + Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.info.efficiency"));
+            info.AppendLine(Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.info.max"));
+            info.AppendLine("  " + maximalCrew + " " + Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.info.kerbals"));
 
             for (int i = 1; i < lines.Length; i++)
             {
@@ -182,7 +183,7 @@ namespace PlanetarySurfaceStructures
 
         public string GetModuleTitle()
         {
-            return "Resource Converter";
+            return Localizer.GetStringByTag("#LOC_KPBS.greenhousemodule.name");//"Resource Converter";
         }
 
         public Callback<Rect> GetDrawModulePanelCallback()

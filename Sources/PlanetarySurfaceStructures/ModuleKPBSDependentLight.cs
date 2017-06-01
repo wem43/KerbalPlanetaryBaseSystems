@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures
 {
@@ -12,9 +13,9 @@ namespace PlanetarySurfaceStructures
 
         //the texts for the deployment of the module
         [KSPField]
-        public string startEventGUIName = "Lights On";
+        public string startEventGUIName = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.action.on");
         [KSPField]
-        public string endEventGUIName = "Lights Off";
+        public string endEventGUIName = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.action.off");
 
         //availability of the animation
         [KSPField]
@@ -45,11 +46,12 @@ namespace PlanetarySurfaceStructures
         private PlanetaryModule dependent = null;
         //the state of the lights
         public string lightStatus = "Off";
+        public LightState lightStatusT = LightState.Off;
 
         //----------------actions-----------------
 
         //the action to toggle the animation
-        [KSPAction("Toggle lights")]
+        [KSPAction("#autoLOC_502011")]
         public void toggleAction(KSPActionParam param)
         {
             if (availableInVessel)
@@ -57,18 +59,18 @@ namespace PlanetarySurfaceStructures
         }
 
         //the action to toggle the animation
-        [KSPAction("Turn lights on")]
+        [KSPAction("#LOC_KPBS.dependendlight.action.on")]
         public void turnOnAction(KSPActionParam param)
         {
-            if ((availableInVessel) && (lightStatus.Equals("Off") || lightStatus.Equals("Turning off..")))
+            if ((availableInVessel) && ((lightStatusT == LightState.Off) || (lightStatusT == LightState.TurningOff)))
                 toggleAnimation();
         }
 
         //the action to toggle the animation
-        [KSPAction("Turn lights off")]
+        [KSPAction("#LOC_KPBS.dependendlight.action.off")]
         public void turnOffAction(KSPActionParam param)
         {
-            if ((availableInVessel) && (lightStatus.Equals("On") || lightStatus.Equals("Turning on..")))
+            if ((availableInVessel) && ((lightStatusT == LightState.On) || (lightStatusT == LightState.TurningOn)))
             {
                 toggleAnimation();
             }
@@ -77,7 +79,7 @@ namespace PlanetarySurfaceStructures
         //----------------events-----------------
 
         //the Event triggered when the module is deployed or retracted
-        [KSPEvent(name = "toggleAnimation", guiName = "Lights Toggle", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
+        [KSPEvent(name = "toggleAnimation", guiName = "#autoLOC_502011", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
         public void toggleAnimation()
         {
             //variable for other modules to show the module is animating 
@@ -119,7 +121,7 @@ namespace PlanetarySurfaceStructures
 
         //----------------methods-----------------
 
-        public override void OnStart(PartModule.StartState state)
+        public override void OnStart(StartState state)
         {
             base.OnStart(state);
 
@@ -127,7 +129,7 @@ namespace PlanetarySurfaceStructures
             anim = part.FindModelAnimators(animationName)[0];
 
             //find the dependent module 
-            dependent = (PlanetaryModule)this.part.GetComponent("PlanetaryModule");
+            dependent = (PlanetaryModule)part.GetComponent("PlanetaryModule");
 
 
             if (anim != null) //Only Init when an animation is available
@@ -151,11 +153,13 @@ namespace PlanetarySurfaceStructures
 
                     if (animationTime == 1f)
                     {
-                        lightStatus = "On";
+                        lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.on");
+                        lightStatusT = LightState.On;
                     }
                     else
                     {
-                        lightStatus = "Turning on";
+                        lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.turningon");
+                        lightStatusT = LightState.TurningOn;
                     }
 
                 }
@@ -163,11 +167,13 @@ namespace PlanetarySurfaceStructures
                 {
                     if (animationTime == 0f)
                     {
-                        lightStatus = "Off";
+                        lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.off");
+                        lightStatusT = LightState.Off;
                     }
                     else
                     {
-                        lightStatus = "Turning off";
+                        lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.turningoff");
+                        lightStatusT = LightState.TurningOff;
                     }
 
                     anim[animationName].speed = -1f;
@@ -192,7 +198,7 @@ namespace PlanetarySurfaceStructures
                 bool bShowGUI = true;
                 if (dependent != null)
                 {
-                    bShowGUI = dependent.status.Equals("Deployed");
+                    bShowGUI = dependent.moduleStatus == PlanetaryModule.ModuleState.Deployed;
                 }
 
                 Events["toggleAnimation"].guiActiveEditor = availableInEditor;
@@ -243,7 +249,8 @@ namespace PlanetarySurfaceStructures
                             }
                             animationTime = anim[animationName].normalizedTime;
 
-                            lightStatus = "Turning off..";
+                            lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.turningoff");
+                            lightStatusT = LightState.TurningOff;
                         }
                         else
                         {
@@ -265,7 +272,8 @@ namespace PlanetarySurfaceStructures
                                 animationTime = 0f;
                             }
 
-                            lightStatus = "Off";
+                            lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.off");
+                            lightStatusT = LightState.Off;
                         }
                     }
                     else
@@ -276,11 +284,15 @@ namespace PlanetarySurfaceStructures
                             //update the status
                             if (nextIsReverse)
                             {
-                                lightStatus = "On";
+                                animationTime = 1f;
+                                lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.on");
+                                lightStatusT = LightState.On;
                             }
                             else
                             {
-                                lightStatus = "Off";
+                                animationTime = 0f;
+                                lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.off");
+                                lightStatusT = LightState.Off;
                             }
                             anim[animationName].normalizedTime = animationTime;
                         }
@@ -288,11 +300,13 @@ namespace PlanetarySurfaceStructures
                         {
                             if (nextIsReverse)
                             {
-                                lightStatus = "Turning on..";
+                                lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.turningon");
+                                lightStatusT = LightState.TurningOn;
                             }
                             else
                             {
-                                lightStatus = "Turning off..";
+                                lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.turningoff");
+                                lightStatusT = LightState.TurningOff;
                             }
                             animationTime = anim[animationName].normalizedTime;
                         }
@@ -311,12 +325,14 @@ namespace PlanetarySurfaceStructures
                     if (nextIsReverse)
                     {
                         animationTime = 1f;
-                        lightStatus = "On";
+                        lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.on");
+                        lightStatusT = LightState.On;
                     }
                     else
                     {
                         animationTime = 0f;
-                        lightStatus = "Off";
+                        lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.off");
+                        lightStatusT = LightState.Off;
                     }
                     anim[animationName].normalizedTime = animationTime;
                 }
@@ -324,11 +340,13 @@ namespace PlanetarySurfaceStructures
                 {
                     if (nextIsReverse)
                     {
-                        lightStatus = "Turning on..";
+                        lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.turningon");
+                        lightStatusT = LightState.TurningOn;
                     }
                     else
                     {
-                        lightStatus = "Turning off..";
+                        lightStatus = Localizer.GetStringByTag("#LOC_KPBS.dependendlight.status.turningoff");
+                        lightStatusT = LightState.TurningOff;
                     }
 
                     animationTime = anim[animationName].normalizedTime;
@@ -336,5 +354,13 @@ namespace PlanetarySurfaceStructures
 
             }
         }
+    }
+
+    public enum LightState
+    {
+        On,
+        Off,
+        TurningOn,
+        TurningOff
     }
 }

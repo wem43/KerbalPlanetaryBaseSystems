@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures
 {
@@ -219,7 +220,7 @@ namespace PlanetarySurfaceStructures
          */
         public override string GetInfo()
         {
-            return "This part changes its appearance depending on where other parts are attached to it";
+            return Localizer.GetStringByTag("#LOC_KPBS.corridornode.info");//"This part changes its appearance depending on where other parts are attached to it";
         }
 
         //clear all the data and the listener for GameEvents
@@ -338,7 +339,7 @@ namespace PlanetarySurfaceStructures
 
         public string GetModuleTitle()
         {
-            return "Adaptive Model";
+            return Localizer.GetStringByTag("#LOC_KPBS.corridornode.name");//"Adaptive Part";
         }
 
         public Callback<Rect> GetDrawModulePanelCallback()

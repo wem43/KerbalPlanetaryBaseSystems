@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures 
 {
@@ -12,14 +13,14 @@ namespace PlanetarySurfaceStructures
 
         /** The name of the startEvent */
         [KSPField]
-        public string startEventGUIName = "Deploy";
+        public string startEventGUIName = Localizer.GetStringByTag("#LOC_KPBS.planetarymodule.deploy");//"Deploy";
 		
 		/** The name of the end event */
         [KSPField]
-        public string endEventGUIName = "Retract";
+        public string endEventGUIName = Localizer.GetStringByTag("#LOC_KPBS.planetarymodule.retract");//"Retract";
 
         /** Varaible defining if the animation is available in EVA */
-		[KSPField]
+        [KSPField]
         public bool availableInEVA = false;
 		
 		/** Varaible defining if the animation is available from the vessel */
@@ -45,6 +46,7 @@ namespace PlanetarySurfaceStructures
         //the shown status of the Module
         [KSPField(guiActive = true, guiName = "Status")]
         public string status = "Retracted";
+        public ModuleState moduleStatus = ModuleState.Retracted;
 
         /** The layer of the animation */
         [KSPField]
@@ -110,10 +112,10 @@ namespace PlanetarySurfaceStructures
         /**
 		 * The action that can be used for makros to toggle the state of the module
 		 */
-        [KSPAction("Toggle deployment")]
+        [KSPAction("#LOC_KPBS.planetarymodule.event.toggle")]
         public void toggleAction(KSPActionParam param) 
 		{
-            if ((availableInVessel) && (!status.Equals("Deployed") || (this.part.protoModuleCrew.Count <= crewCapcityRetracted))) {
+            if ((availableInVessel) && (!(moduleStatus == ModuleState.Deployed) || (this.part.protoModuleCrew.Count <= crewCapcityRetracted))) {
                 toggleAnimation();
             }            
         }
@@ -121,13 +123,13 @@ namespace PlanetarySurfaceStructures
 		/**
 		 * The retracts action that can be used for makros
 		 */
-        [KSPAction("Retract")]
+        [KSPAction("#LOC_KPBS.planetarymodule.action.retract")]
         public void retractAction(KSPActionParam param) 
 		{
 			if (availableInVessel) 
 			{
 				//only retract when the module is retracting or retracted and no kerbals are inside
-                if ((status.Equals("Deployed") || status.Equals("Deploying..")) && 
+                if (((moduleStatus == ModuleState.Deployed) || (moduleStatus == ModuleState.Deploying)) && 
                     (part.protoModuleCrew.Count <= crewCapcityRetracted)) 
 				{
                     toggleAnimation();
@@ -138,12 +140,12 @@ namespace PlanetarySurfaceStructures
         /**
 		 * The deploy action that can be used for makros
 		 */
-        [KSPAction("Deploy")]
+        [KSPAction("#LOC_KPBS.planetarymodule.action.deploy")]
         public void deployAction(KSPActionParam param) {
             
 			if (availableInVessel) {
                 
-				if (status.Equals("Retracted") || status.Equals("Retracting..")) {
+				if ((moduleStatus == ModuleState.Retracted) || (moduleStatus == ModuleState.Retracting)) {
                     toggleAnimation();
                 }
 			}
@@ -154,7 +156,7 @@ namespace PlanetarySurfaceStructures
         /**
 		 * Toggle the animation of the parts (retracting or deploying depending in the state)
 		 */
-        [KSPEvent(name = "toggleAnimation", guiName = "Deploy", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
+        [KSPEvent(name = "toggleAnimation", guiName = "#LOC_KPBS.planetarymodule.action.deploy", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
         public void toggleAnimation()
         {
             if (deployAnim != null)
@@ -197,7 +199,7 @@ namespace PlanetarySurfaceStructures
         /**
 		 * Called at the start. Initialize animation and state of this module
 		 */
-        public override void OnStart(PartModule.StartState state)
+        public override void OnStart(StartState state)
         {
             base.OnStart(state);
             part.CheckTransferDialog();
@@ -244,11 +246,13 @@ namespace PlanetarySurfaceStructures
                     if (animationTime == 1f)
                     {
                         status = "Deployed";
+                        moduleStatus = ModuleState.Deployed;
                         part.CrewCapacity = crewCapacityDeployed;
                     }
                     else
                     {
                         status = "Deploying..";
+                        moduleStatus = ModuleState.Deploying;
                         part.CrewCapacity = crewCapacityDeployed;
                     }
                     deployAnim[animationName].speed = 1f;
@@ -258,12 +262,14 @@ namespace PlanetarySurfaceStructures
                     if (animationTime == 0f)
                     {
                         status = "Retracted";
+                        moduleStatus = ModuleState.Retracted;
                     }
                     else
                     {
                         status = "Retracting..";
+                        moduleStatus = ModuleState.Retracting;
                     }
-                    this.part.CrewCapacity = crewCapcityRetracted;
+                    part.CrewCapacity = crewCapcityRetracted;
 
                     deployAnim[animationName].speed = -1f;
                 }
@@ -302,7 +308,7 @@ namespace PlanetarySurfaceStructures
 		 */
         public override string GetInfo()
         {
-            return "\nCrew Capacity\n Retracted:\t" + crewCapcityRetracted.ToString() + "\n Deployed:\t" + crewCapacityDeployed.ToString() + "\n";
+            return Localizer.GetStringByTag("#LOC_KPBS.planetarymodule.info1") + crewCapcityRetracted.ToString() + Localizer.GetStringByTag("#LOC_KPBS.planetarymodule.info2") + crewCapacityDeployed.ToString() + "\n";
         }
 
 		/**
@@ -326,6 +332,7 @@ namespace PlanetarySurfaceStructures
                     {
                         animationTime = 1f;
 						status = "Deployed";
+                        moduleStatus = ModuleState.Deployed;
 
                         //switch to the extended internal
                         if (isInternalPacked)
@@ -356,6 +363,7 @@ namespace PlanetarySurfaceStructures
                         }
                         animationTime = 0f;
 						status = "Retracted";
+                        moduleStatus = ModuleState.Retracted;
                     }
                     
 					//set the normalized time of the animation 
@@ -378,11 +386,13 @@ namespace PlanetarySurfaceStructures
                     if (nextIsReverse)
 					{
 						status = "Deploying..";
-					}
+                        moduleStatus = ModuleState.Deploying;
+                    }
 					else 
 					{
 						status = "Retracting..";
-					}
+                        moduleStatus = ModuleState.Retracting;
+                    }
 					
 					//update crew capacity and contract state
 					if (part.CrewCapacity != crewCapcityRetracted)
@@ -407,7 +417,7 @@ namespace PlanetarySurfaceStructures
 
             //check if the part has to be deployed because of too many kerbals inside
             if (newCrew > part.CrewCapacity) {
-				if ((!status.Equals("Deployed")) && (!status.Equals("Deploying..")))
+				if ((!(moduleStatus == ModuleState.Deployed)) && (!(moduleStatus == ModuleState.Deploying)))
                 {
                     toggleAnimation();    
                 }
@@ -547,7 +557,7 @@ namespace PlanetarySurfaceStructures
 
         public string GetModuleTitle()
         {
-            return "Deployable Part";
+            return Localizer.GetStringByTag("#LOC_KPBS.planetarymodule.name");// "Deployable Part";
         }
 
         public Callback<Rect> GetDrawModulePanelCallback()
@@ -558,6 +568,14 @@ namespace PlanetarySurfaceStructures
         public string GetPrimaryField()
         {
             return null;
+        }
+
+        public enum ModuleState
+        {
+            Retracted,
+            Retracting,
+            Deployed,
+            Deploying
         }
     }
 }

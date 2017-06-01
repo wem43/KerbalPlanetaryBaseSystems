@@ -1,17 +1,19 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures
 {
     class KPBSSettings : GameParameters.CustomParameterNode
     {
-        [GameParameters.CustomParameterUI("Group all Parts in Function Filter", autoPersistance = true, toolTip = "Group all parts in one category in the function filter")]
+        [GameParameters.CustomParameterUI("#LOC_KPBS.filtersettings.desc", autoPersistance = true, toolTip = "#LOC_KPBS.filtersettings.tooltip")]
         public bool functionFilter = false;
 
 
         //get the title
         public override string Title {
             get {
-                return "Filter Settings";
+                return Localizer.GetStringByTag("#LOC_KPBS.filtersettings.name");//"Filter Settings";
             }
         }
 
@@ -34,7 +36,18 @@ namespace PlanetarySurfaceStructures
             get {
                 return "Planetary Base System";
             }
+            
         }
+        
+        //get the section displayed
+        public override string DisplaySection
+        {
+            get
+            {
+                return Localizer.GetStringByTag("#LOC_KPBS.filtersettings.section");
+            }
+        }
+
 
         //get the section order
         public override int SectionOrder {
@@ -42,7 +55,6 @@ namespace PlanetarySurfaceStructures
                 return 1;
             }
         }
-
 
         public override bool Enabled(MemberInfo member, GameParameters parameters)
         {

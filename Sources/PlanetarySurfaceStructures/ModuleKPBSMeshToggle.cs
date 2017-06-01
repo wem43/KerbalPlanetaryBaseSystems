@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures
 {
@@ -13,10 +14,10 @@ namespace PlanetarySurfaceStructures
         public string transformNames = string.Empty;
 
         [KSPField]//Text to show to hide a mesh
-        public string showMeshString = "Show Mesh";
+        public string showMeshString = Localizer.GetStringByTag("#LOC_KPBS.meshtoggle.show");//"Show Mesh";
 
         [KSPField]//Text to show to show a mesh
-        public string hideMeshString = "Hide Mesh";
+        public string hideMeshString = Localizer.GetStringByTag("#LOC_KPBS.meshtoggle.hide");//"Hide Mesh";
 
         [KSPField]//Whether the toggle is available in flight
         public bool availableInFlight = true; 
@@ -99,7 +100,7 @@ namespace PlanetarySurfaceStructures
         /// <summary>
         /// Event that toggles the visibility of the mesh
         /// </summary>
-        [KSPEvent(name = "toggleMesh", guiName = "Toggle Mesh", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
+        [KSPEvent(name = "toggleMesh", guiName = "#LOC_KPBS.meshtoggle.toggle", guiActive = true, guiActiveUnfocused = false, unfocusedRange = 5f, guiActiveEditor = true)]
         public void toggleMesh()
         {
             transformsVisible = !transformsVisible;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using KSP.Localization;
 
 namespace PlanetarySurfaceStructures
 {
@@ -15,13 +16,20 @@ namespace PlanetarySurfaceStructures
 
         public string GetModuleTitle()
         {
-            return "Resource Converter";
+            return Localizer.GetStringByTag("#LOC_KPBS.resourceconverter.name");//"Resource Converter";
         }
 
         public string GetPrimaryField()
         {
             return null;
         }
+
+        public override void OnStart(StartState state)
+        {
+            base.OnStart(state);
+            Fields["productionSpeed"].guiName = Localizer.GetStringByTag("#LOC_KPBS.resourceconverter.speed");
+        }
+        
 
         // Prepare the recipe with regard to the amount of crew in this module
         protected override ConversionRecipe PrepareRecipe(double deltatime)
