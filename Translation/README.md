@@ -5,11 +5,11 @@ First of all thank yor for looking at these files in consideration to help trans
 ### How to translate
 To create a translation for your language, make a copy of the files *en_us.cfg* and *KSPedia_en.cfg* and name 
 them accordingly to your language:
-* *FUR_es-es.cfg* and *KSPedia_es-es.cfg* for spanish
-* *FUR_es-mx.cfg* and *KSPedia_es-mx.cfg* for mexican spanish
-* *FUR_ja.cfg* and *KSPedia_ja.cfg* for japanese
-* *FUR_ru.cfg* and *KSPedia_ru.cfg* for russian
-* *FUR_zh-cn.cfg* and *KSPedia_zh-cn.cfg* for simplified chinese
+* *es-es.cfg* and *KSPedia_es-es.cfg* for spanish
+* *es-mx.cfg* and *KSPedia_es-mx.cfg* for mexican spanish
+* *ja.cfg* and *KSPedia_ja.cfg* for japanese
+* *ru.cfg* and *KSPedia_ru.cfg* for russian
+* *zh-cn.cfg* and *KSPedia_zh-cn.cfg* for simplified chinese
 
 Then change the language tag in the third line of the copy of the *en_us.cfg* file to the tag of your language.
 
