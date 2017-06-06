@@ -419,7 +419,7 @@ namespace PlanetarySurfaceStructures
                     }
 
                     //Find the function filter
-                    PartCategorizer.Category functionFilter = PartCategorizer.Instance.filters.Find(f => f.button.categoryName == "Filter by Function");
+                    PartCategorizer.Category functionFilter = PartCategorizer.Instance.filters.Find(f => f.button.categoryName == filterName);
                     PartCategorizer.AddCustomSubcategoryFilter(functionFilter, "Life Support", Localizer.GetStringByTag("#LOC_KPBS.categoryfilter.category.lifesupport"), filterIconLifeSupport, p => filter_KKAOSS_LS(p));
 
                     //add the greenhouse the the LS mods when other ls mods were found
