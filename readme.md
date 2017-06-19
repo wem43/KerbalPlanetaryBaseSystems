@@ -19,6 +19,8 @@ If anyone is interested to translate KPBS into Japanese ![](http://i.imgur.com/M
 
 You can find all the texts that need translation here: [KPBS Texts](https://github.com/Nils277/KerbalPlanetaryBaseSystems/tree/master/Translation). (5916 Words)  
 
+***Important***: Please contact me, before you start with the translation. It already happend more than once that multiple
+persons worked on a translation for the same texts and therefore their efforts were in vain.
 
 ### Galleries
 
